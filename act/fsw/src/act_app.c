@@ -17,10 +17,14 @@
 #include "act_events.h"
 #include "act_version.h"
 
+
 /*
 ** global data
 */
 
+boolean fo_u_state = FALSE;
+boolean fc_u_state = FALSE;
+boolean av_m_state = FALSE;
 
 
 act_hk_tlm_t    ACT_HkTelemetryPkt;
@@ -110,12 +114,8 @@ void ACT_AppInit(void)
                    ACT_HK_TLM_MID,
                    ACT_HK_TLM_LNGTH, TRUE);
 
-    boolean fo_u_state = false;
-    boolean fc_u_state = false;
-    boolean av_m_state = false;
-
     /*Initializes the pigpio library, prints out a warning if it fails*/
-    if(gpioInitialize() < 0)
+    if (gpioInitialise() < 0)
     {
         CFE_EVS_SendEvent(ACT_STARTUP_INF_EID, CFE_EVS_ERROR, 
                 "Failed to initialize pigpio.");
@@ -124,7 +124,12 @@ void ACT_AppInit(void)
     {
         CFE_EVS_SendEvent(ACT_STARTUP_INF_EID, CFE_EVS_INFORMATION, 
                 "pigpio initialized successfully.");
+        gpioSetMode(FO_U_PIN, PI_OUTPUT);
+        gpioSetMode(FC_U_PIN, PI_OUTPUT);
+        gpioSetMode(AV_M_PIN, PI_OUTPUT);
     }
+
+
 
     CFE_EVS_SendEvent (ACT_STARTUP_INF_EID, CFE_EVS_INFORMATION,
                "Actuation App Initialized. Version %d.%d.%d.%d",
@@ -304,7 +309,7 @@ boolean ACT_VerifyCmdLength(CFE_SB_MsgPtr_t msg, uint16 ExpectedLength)
 
 void ACT_CloseFOU(void)
 {
-    fo_u_state = true;
+    fo_u_state = TRUE;
 
     CFE_EVS_SendEvent(ACT_COMMAND_CLOSEFOU_EID, CFE_EVS_INFORMATION,
             "ACT: Closing FO_U");
@@ -313,7 +318,7 @@ void ACT_CloseFOU(void)
 
 void ACT_OpenFCU(void)
 {
-    fc_u_state = true;
+    fc_u_state = TRUE;
 
     CFE_EVS_SendEvent(ACT_COMMAND_OPENFCU_EID, CFE_EVS_INFORMATION,
             "ACT: Opening FC_U");
@@ -322,7 +327,7 @@ void ACT_OpenFCU(void)
 
 void ACT_OpenAVM(void)
 {
-    av_m_state = true;
+    av_m_state = TRUE;
 
     CFE_EVS_SendEvent(ACT_COMMAND_OPENAVM_EID, CFE_EVS_INFORMATION,
             "ACT: Opening AV_M");
@@ -331,7 +336,7 @@ void ACT_OpenAVM(void)
 
 void ACT_OpenFOU(void)
 {
-    fo_u_state = false;
+    fo_u_state = FALSE;
 
     CFE_EVS_SendEvent(ACT_COMMAND_OPENFOU_EID, CFE_EVS_INFORMATION,
             "ACT: Opening FO_U");
@@ -340,7 +345,7 @@ void ACT_OpenFOU(void)
 
 void ACT_CloseFCU(void)
 {
-    fc_u_state = false;
+    fc_u_state = FALSE;
 
     CFE_EVS_SendEvent(ACT_COMMAND_CLOSEFCU_EID, CFE_EVS_INFORMATION,
             "ACT: Closing FC_U");
@@ -349,7 +354,7 @@ void ACT_CloseFCU(void)
 
 void ACT_CloseAVM(void)
 {
-    av_m_state = false;
+    av_m_state = FALSE;
 
     CFE_EVS_SendEvent(ACT_COMMAND_CLOSEAVM_EID, CFE_EVS_INFORMATION,
             "ACT: Closing AV_M");
