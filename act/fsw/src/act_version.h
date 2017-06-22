@@ -15,7 +15,7 @@
 #define ACT_MAJOR_VERSION    1
 #define ACT_MINOR_VERSION    0
 #define ACT_REVISION         0
-#define ACT_MISSION_REV      1
+#define ACT_MISSION_REV      2
       
 #endif /* _act_version_h_ */
 

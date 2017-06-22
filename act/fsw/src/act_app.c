@@ -22,9 +22,11 @@
 ** global data
 */
 
-boolean fo_u_state = FALSE;
-boolean fc_u_state = FALSE;
-boolean av_m_state = FALSE;
+boolean fo_u_state = PI_LOW;
+boolean fc_u_state = PI_LOW;
+boolean av_m_state = PI_LOW;
+
+int pi;
 
 
 act_hk_tlm_t    ACT_HkTelemetryPkt;
@@ -69,13 +71,13 @@ void ACT_AppMain( void )
             ACT_ProcessCommandPacket();
         }
 
-        gpioWrite(FO_U_PIN, fo_u_state); 
-        gpioWrite(FC_U_PIN, fc_u_state); 
-        gpioWrite(AV_M_PIN, av_m_state); 
+        gpio_write(pi, FO_U_PIN, fo_u_state); 
+        gpio_write(pi, FC_U_PIN, fc_u_state); 
+        gpio_write(pi, AV_M_PIN, av_m_state); 
     }
 
     /*quit pigpio before exiting program*/
-    gpioTerminate();
+    pigpio_stop(pi);
 
     CFE_ES_ExitApp(RunStatus);
 
@@ -115,21 +117,19 @@ void ACT_AppInit(void)
                    ACT_HK_TLM_LNGTH, TRUE);
 
     /*Initializes the pigpio library, prints out a warning if it fails*/
-    if (gpioInitialise() < 0)
+    if ((pi=pigpio_start(0,0)) < 0)
     {
         CFE_EVS_SendEvent(ACT_STARTUP_INF_EID, CFE_EVS_ERROR, 
-                "Failed to initialize pigpio.");
+                "FAILED TO INITIALIZE PIGPIO! MAKE SURE TO RUN 'sudo pigpiod'");
     }
     else
     {
         CFE_EVS_SendEvent(ACT_STARTUP_INF_EID, CFE_EVS_INFORMATION, 
                 "pigpio initialized successfully.");
-        gpioSetMode(FO_U_PIN, PI_OUTPUT);
-        gpioSetMode(FC_U_PIN, PI_OUTPUT);
-        gpioSetMode(AV_M_PIN, PI_OUTPUT);
+        set_mode(pi, FO_U_PIN, PI_OUTPUT);
+        set_mode(pi, FC_U_PIN, PI_OUTPUT);
+        set_mode(pi, AV_M_PIN, PI_OUTPUT);
     }
-
-
 
     CFE_EVS_SendEvent (ACT_STARTUP_INF_EID, CFE_EVS_INFORMATION,
                "Actuation App Initialized. Version %d.%d.%d.%d",
@@ -309,7 +309,7 @@ boolean ACT_VerifyCmdLength(CFE_SB_MsgPtr_t msg, uint16 ExpectedLength)
 
 void ACT_CloseFOU(void)
 {
-    fo_u_state = TRUE;
+    fo_u_state = PI_HIGH;
 
     CFE_EVS_SendEvent(ACT_COMMAND_CLOSEFOU_EID, CFE_EVS_INFORMATION,
             "ACT: Closing FO_U");
@@ -318,7 +318,7 @@ void ACT_CloseFOU(void)
 
 void ACT_OpenFCU(void)
 {
-    fc_u_state = TRUE;
+    fc_u_state = PI_HIGH;
 
     CFE_EVS_SendEvent(ACT_COMMAND_OPENFCU_EID, CFE_EVS_INFORMATION,
             "ACT: Opening FC_U");
@@ -327,7 +327,7 @@ void ACT_OpenFCU(void)
 
 void ACT_OpenAVM(void)
 {
-    av_m_state = TRUE;
+    av_m_state = PI_HIGH;
 
     CFE_EVS_SendEvent(ACT_COMMAND_OPENAVM_EID, CFE_EVS_INFORMATION,
             "ACT: Opening AV_M");
@@ -336,7 +336,7 @@ void ACT_OpenAVM(void)
 
 void ACT_OpenFOU(void)
 {
-    fo_u_state = FALSE;
+    fo_u_state = PI_LOW;
 
     CFE_EVS_SendEvent(ACT_COMMAND_OPENFOU_EID, CFE_EVS_INFORMATION,
             "ACT: Opening FO_U");
@@ -345,7 +345,7 @@ void ACT_OpenFOU(void)
 
 void ACT_CloseFCU(void)
 {
-    fc_u_state = FALSE;
+    fc_u_state = PI_LOW;
 
     CFE_EVS_SendEvent(ACT_COMMAND_CLOSEFCU_EID, CFE_EVS_INFORMATION,
             "ACT: Closing FC_U");
@@ -354,7 +354,7 @@ void ACT_CloseFCU(void)
 
 void ACT_CloseAVM(void)
 {
-    av_m_state = FALSE;
+    av_m_state = PI_LOW;
 
     CFE_EVS_SendEvent(ACT_COMMAND_CLOSEAVM_EID, CFE_EVS_INFORMATION,
             "ACT: Closing AV_M");
