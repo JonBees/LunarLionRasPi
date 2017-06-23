@@ -22,7 +22,6 @@
 #include <string.h>
 #include <errno.h>
 #include <unistd.h>
-#include <pigpiod_if2.h>
 
 
 /***********************************************************************/
@@ -36,9 +35,6 @@
 /************************************************************************
 ** Pin Definitions
 *************************************************************************/
-#define FO_U_PIN 23
-#define FC_U_PIN 24
-#define AV_M_PIN 25
 
 
 /****************************************************************************/
@@ -55,12 +51,6 @@ void SI_ProcessGroundCommand(void);
 void SI_ReportHousekeeping(void);
 void SI_ResetCounters(void);
 
-void SI_CloseFOU(void);
-void SI_OpenFCU(void);
-void SI_OpenAVM(void);
-void SI_OpenFOU(void);
-void SI_CloseFCU(void);
-void SI_CloseAVM(void);
 
 
 

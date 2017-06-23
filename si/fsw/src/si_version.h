@@ -15,7 +15,7 @@
 #define SI_MAJOR_VERSION    1
 #define SI_MINOR_VERSION    0
 #define SI_REVISION         0
-#define SI_MISSION_REV      2
+#define SI_MISSION_REV      0
       
 #endif /* _SI_version_h_ */
 

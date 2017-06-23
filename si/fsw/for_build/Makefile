@@ -11,17 +11,17 @@
 #
 # Subsystem produced by this makefile.
 #
-APPTARGET = act
+APPTARGET = si
 
 # 
 # Entry Point for task
 # 
-ENTRY_PT = ACT_AppMain
+ENTRY_PT = SI_AppMain
 
 #
 # Object files required to build subsystem.
 #
-OBJS = act_app.o
+OBJS = si_app.o
 
 #
 # Source files required to build subsystem; used to generate dependencies.
@@ -33,7 +33,7 @@ SOURCES = $(OBJS:.o=.c)
 ##
 ## Specify extra C Flags needed to build this subsystem
 ##
-LOCAL_COPTS = -lpigpio
+LOCAL_COPTS = -llabjackusb
 
 
 ##

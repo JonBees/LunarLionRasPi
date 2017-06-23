@@ -22,11 +22,6 @@
 ** global data
 */
 
-boolean fo_u_state = PI_LOW;
-boolean fc_u_state = PI_LOW;
-boolean av_m_state = PI_LOW;
-
-int pi;
 
 
 SI_hk_tlm_t    SI_HkTelemetryPkt;
@@ -70,14 +65,7 @@ void SI_AppMain( void )
         {
             SI_ProcessCommandPacket();
         }
-
-        gpio_write(pi, FO_U_PIN, fo_u_state); 
-        gpio_write(pi, FC_U_PIN, fc_u_state); 
-        gpio_write(pi, AV_M_PIN, av_m_state); 
     }
-
-    /*quit pigpio before exiting program*/
-    pigpio_stop(pi);
 
     CFE_ES_ExitApp(RunStatus);
 
@@ -116,20 +104,6 @@ void SI_AppInit(void)
                    SI_HK_TLM_MID,
                    SI_HK_TLM_LNGTH, TRUE);
 
-    /*Initializes the pigpio library, prints out a warning if it fails*/
-    if ((pi=pigpio_start(0,0)) < 0)
-    {
-        CFE_EVS_SendEvent(SI_STARTUP_INF_EID, CFE_EVS_ERROR, 
-                "FAILED TO INITIALIZE PIGPIO! MAKE SURE TO RUN 'sudo pigpiod'");
-    }
-    else
-    {
-        CFE_EVS_SendEvent(SI_STARTUP_INF_EID, CFE_EVS_INFORMATION, 
-                "pigpio initialized successfully.");
-        set_mode(pi, FO_U_PIN, PI_OUTPUT);
-        set_mode(pi, FC_U_PIN, PI_OUTPUT);
-        set_mode(pi, AV_M_PIN, PI_OUTPUT);
-    }
 
     CFE_EVS_SendEvent (SI_STARTUP_INF_EID, CFE_EVS_INFORMATION,
                "Sensor In App Initialized. Version %d.%d.%d.%d",
@@ -198,33 +172,7 @@ void SI_ProcessGroundCommand(void)
 
         case SI_RESET_COUNTERS_CC:
             SI_ResetCounters();
-            break;
-
-        case SI_CLOSE_FO_U_CC:
-            SI_HkTelemetryPkt.SI_command_count++;
-            SI_CloseFOU();
-            break;
-        case SI_OPEN_FC_U_CC:
-            SI_HkTelemetryPkt.SI_command_count++;
-            SI_OpenFCU();
-            break;
-        case SI_OPEN_AV_M_CC:
-            SI_HkTelemetryPkt.SI_command_count++;
-            SI_OpenAVM();
-            break;
-        case SI_OPEN_FO_U_CC:
-            SI_HkTelemetryPkt.SI_command_count++;
-            SI_OpenFOU();
-            break;
-        case SI_CLOSE_FC_U_CC:
-            SI_HkTelemetryPkt.SI_command_count++;
-            SI_CloseFCU();
-            break;
-        case SI_CLOSE_AV_M_CC:
-            SI_HkTelemetryPkt.SI_command_count++;
-            SI_CloseAVM();
-            break;
-            
+            break;        
 
         /* default case already found during FC vs length test */
         default:
@@ -300,63 +248,3 @@ boolean SI_VerifyCmdLength(CFE_SB_MsgPtr_t msg, uint16 ExpectedLength)
     return(result);
 
 } /* End of SI_VerifyCmdLength() */
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * **/
-/*                                                                            */
-/* SI_CloseFOU() -- Verify command packet length                             */
-/*                                                                            */
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * **/
-
-void SI_CloseFOU(void)
-{
-    fo_u_state = PI_HIGH;
-
-    CFE_EVS_SendEvent(SI_COMMAND_CLOSEFOU_EID, CFE_EVS_INFORMATION,
-            "SI: Closing FO_U");
-        return;
-}
-
-void SI_OpenFCU(void)
-{
-    fc_u_state = PI_HIGH;
-
-    CFE_EVS_SendEvent(SI_COMMAND_OPENFCU_EID, CFE_EVS_INFORMATION,
-            "SI: Opening FC_U");
-        return;
-}
-
-void SI_OpenAVM(void)
-{
-    av_m_state = PI_HIGH;
-
-    CFE_EVS_SendEvent(SI_COMMAND_OPENAVM_EID, CFE_EVS_INFORMATION,
-            "SI: Opening AV_M");
-        return;
-}
-
-void SI_OpenFOU(void)
-{
-    fo_u_state = PI_LOW;
-
-    CFE_EVS_SendEvent(SI_COMMAND_OPENFOU_EID, CFE_EVS_INFORMATION,
-            "SI: Opening FO_U");
-        return;
-}
-
-void SI_CloseFCU(void)
-{
-    fc_u_state = PI_LOW;
-
-    CFE_EVS_SendEvent(SI_COMMAND_CLOSEFCU_EID, CFE_EVS_INFORMATION,
-            "SI: Closing FC_U");
-        return;
-}
-
-void SI_CloseAVM(void)
-{
-    av_m_state = PI_LOW;
-
-    CFE_EVS_SendEvent(SI_COMMAND_CLOSEAVM_EID, CFE_EVS_INFORMATION,
-            "SI: Closing AV_M");
-        return;
-}

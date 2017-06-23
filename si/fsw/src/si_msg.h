@@ -18,14 +18,6 @@
 #define SI_NOOP_CC                 0
 #define SI_RESET_COUNTERS_CC       1
 
-#define SI_CLOSE_FO_U_CC 7
-#define SI_OPEN_FC_U_CC 8
-#define SI_OPEN_AV_M_CC 9
-
-#define SI_OPEN_FO_U_CC 10
-#define SI_CLOSE_FC_U_CC 11
-#define SI_CLOSE_AV_M_CC 12
-
 /*************************************************************************/
 /*
 ** Type definition (generic "no arguments" command)
