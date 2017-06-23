@@ -131,6 +131,9 @@ void ACT_AppInit(void)
         set_mode(pi, AV_M_PIN, PI_OUTPUT);
     }
 
+    CFE_EVS_SendEvent(ACT_STARTUP_INF_EID, CFE_EVS_INFORMATION, 
+                "Did you ever hear the tragedy of Darth Plagueis the Wise?");
+    
     CFE_EVS_SendEvent (ACT_STARTUP_INF_EID, CFE_EVS_INFORMATION,
                "Actuation App Initialized. Version %d.%d.%d.%d",
                 ACT_MAJOR_VERSION,
