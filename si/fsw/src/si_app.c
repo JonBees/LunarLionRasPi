@@ -248,3 +248,30 @@ boolean SI_VerifyCmdLength(CFE_SB_MsgPtr_t msg, uint16 ExpectedLength)
     return(result);
 
 } /* End of SI_VerifyCmdLength() */
+
+
+void SI_SPI(HANDLE hDevice, )
+{
+    uint8 command[16]; //13 command bytes + 3 SPI bytes
+    uint8 response[10]; //7 response info bytes + 3 SPI bytes
+
+    //command[0] //Checksum8 
+    command[1] = (uint8)0xF8 //command byte (says that this is a command)
+    command[2] = 6 //4 + # of SPI words (bytes/2). The DAC has an odd #, so add one and make the last byte a 0. 
+    command[3] = (uint8)0x3A //SPI-specific command #
+    //command[4] = //Checksum16(LSB)
+    //command[5] = //Checksum16(MSB)
+    command[6] = (uint8)0x40 //01000000 -- MSB is AutoCS, second is DisableDirConfig, two LSB are SPIModes 0-3
+    command[7] = 
+    //command[8] = // bits 2-0 -- # of bits in final byte
+    command[9] = 
+    command[10] = 
+    command[11] = 
+    command[12] = 
+    command[13] = 
+    command[14] = 
+    command[15] = 
+    command[16] = 
+
+
+}

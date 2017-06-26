@@ -23,6 +23,7 @@
 #include <errno.h>
 #include <unistd.h>
 
+#include "u6.h"
 
 /***********************************************************************/
 
@@ -51,7 +52,8 @@ void SI_ProcessGroundCommand(void);
 void SI_ReportHousekeeping(void);
 void SI_ResetCounters(void);
 
-
+void SI_ReadTC(int pin);
+void SI_SPI();
 
 
 boolean SI_VerifyCmdLength(CFE_SB_MsgPtr_t msg, uint16 ExpectedLength);
