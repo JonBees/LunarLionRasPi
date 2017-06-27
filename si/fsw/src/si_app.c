@@ -28,6 +28,14 @@ SI_hk_tlm_t    SI_HkTelemetryPkt;
 CFE_SB_PipeId_t    SI_CommandPipe;
 CFE_SB_MsgPtr_t    SIMsgPtr;
 
+HANDLE DAQ;
+
+//these keep track of how many (and which) TCs and PTs to check
+int TCCount = 0;
+int PTCount = 0;
+int TCQueue[6];
+int PTQueue[13];
+
 static CFE_EVS_BinFilter_t  SI_EventFilters[] =
        {  /* Event ID    mask */
           {SI_STARTUP_INF_EID,       0x0000},
@@ -104,6 +112,16 @@ void SI_AppInit(void)
                    SI_HK_TLM_MID,
                    SI_HK_TLM_LNGTH, TRUE);
 
+    DAQ = LJUSB_OpenDevice(1,0,6);//Device Number, reserved, ProductID
+    if(NULL != DAQ){
+        CFE_EVS_SendEvent (SI_STARTUP_INF_EID, CFE_EVS_INFORMATION,
+               "DAQ Connected Successfully");
+    }
+    else
+    {
+        CFE_EVS_SendEvent(SI_COMMAND_ERR_EID,CFE_EVS_ERROR,
+            "NO DAQ CONNECTED! Make sure it's pluggged in and restart the SI app");
+    }
 
     CFE_EVS_SendEvent (SI_STARTUP_INF_EID, CFE_EVS_INFORMATION,
                "Sensor In App Initialized. Version %d.%d.%d.%d",
@@ -250,28 +268,65 @@ boolean SI_VerifyCmdLength(CFE_SB_MsgPtr_t msg, uint16 ExpectedLength)
 } /* End of SI_VerifyCmdLength() */
 
 
-void SI_SPI(HANDLE hDevice, )
+
+
+
+
+
+
+
+void SI_ADC(HANDLE DAQ, uint8 *SPIRx)
 {
-    uint8 command[16]; //13 command bytes + 3 SPI bytes
-    uint8 response[10]; //7 response info bytes + 3 SPI bytes
+    //create SPITx and fill it with 0s, since it doesn't matter what we try to send to the ADC
+    uint8 *SPITx = (uint8*)malloc(sizeof(uint8)*3);
+    for(int i=0; i<3; i++)
+    {
+        SPITx[i] = 0;
+    }
 
-    //command[0] //Checksum8 
-    command[1] = (uint8)0xF8 //command byte (says that this is a command)
-    command[2] = 6 //4 + # of SPI words (bytes/2). The DAC has an odd #, so add one and make the last byte a 0. 
-    command[3] = (uint8)0x3A //SPI-specific command #
-    //command[4] = //Checksum16(LSB)
-    //command[5] = //Checksum16(MSB)
-    command[6] = (uint8)0x40 //01000000 -- MSB is AutoCS, second is DisableDirConfig, two LSB are SPIModes 0-3
-    command[7] = 
-    //command[8] = // bits 2-0 -- # of bits in final byte
-    command[9] = 
-    command[10] = 
-    command[11] = 
-    command[12] = 
-    command[13] = 
-    command[14] = 
-    command[15] = 
-    command[16] = 
-
-
+    //(Device handle, CSPin, CLKPin, MISOPin, MOSIPin, SIOpts, NumSPIBytes, *SPITx, *SPIRx)
+    errorcode = SPI(DAQ, 0, 1, 2, 3, (uint8)0xC0, 3, *SPITx, *SPIRx);
+    switch(errorcode){
+        case 0: //No error
+            break;
+        case -1:
+            CFE_EVS_SendEvent(SI_LEN_ERR_EID, CFE_EVS_ERROR,
+           "SPI Error : write failed");
+            break;
+        case -2:
+        CFE_EVS_SendEvent(SI_LEN_ERR_EID, CFE_EVS_ERROR,
+           "SPI Error : did not write all of the buffer");
+            break;
+        case -3:
+        CFE_EVS_SendEvent(SI_LEN_ERR_EID, CFE_EVS_ERROR,
+           "SPI Error : read failed");
+            break;
+        case -4:
+        CFE_EVS_SendEvent(SI_LEN_ERR_EID, CFE_EVS_ERROR,
+           "SPI Error : did not write all of the buffer"); 
+            break;
+        case -5:
+        CFE_EVS_SendEvent(SI_LEN_ERR_EID, CFE_EVS_ERROR,
+           "SPI Error : read buffer has bad checksum"); 
+            break;
+        case -6:
+        CFE_EVS_SendEvent(SI_LEN_ERR_EID, CFE_EVS_ERROR,
+           "SPI Error : read buffer has incorrect command byte");
+            break;
+        case -7: 
+        CFE_EVS_SendEvent(SI_LEN_ERR_EID, CFE_EVS_ERROR,
+           "SPI Error : read buffer has incorrect number of data words");
+            break;
+        case -8:
+        CFE_EVS_SendEvent(SI_LEN_ERR_EID, CFE_EVS_ERROR,
+           "SPI Error : read buffer has incorrect extended command number");
+            break;
+        case -9: 
+        CFE_EVS_SendEvent(SI_LEN_ERR_EID, CFE_EVS_ERROR,
+           "SPI error : read buffer has bad checksum16");
+            break;
+        default:
+            CFE_EVS_SendEvent(SI_LEN_ERR_EID, CFE_EVS_ERROR,
+           "Unknown SPI Error");
+    }
 }

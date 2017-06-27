@@ -24,6 +24,7 @@
 #include <unistd.h>
 
 #include "u6.h"
+#include "u6spi.h"
 
 /***********************************************************************/
 
@@ -52,8 +53,13 @@ void SI_ProcessGroundCommand(void);
 void SI_ReportHousekeeping(void);
 void SI_ResetCounters(void);
 
-void SI_ReadTC(int pin);
-void SI_SPI();
+void SI_AddTC(int TCNum);
+void SI_AddPT(int PTNum);
+
+void SI_ReadTCs(void);
+void SI_ReadPTs(void);
+
+void SI_ADC(HANDLE DAQ, uint8 *SPIRx);
 
 
 boolean SI_VerifyCmdLength(CFE_SB_MsgPtr_t msg, uint16 ExpectedLength);
