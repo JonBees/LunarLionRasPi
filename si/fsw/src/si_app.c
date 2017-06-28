@@ -28,13 +28,19 @@ SI_hk_tlm_t    SI_HkTelemetryPkt;
 CFE_SB_PipeId_t    SI_CommandPipe;
 CFE_SB_MsgPtr_t    SIMsgPtr;
 
+//Handle and calibration info for the DAQ
 HANDLE DAQ;
+u6CalibrationInfo DAQCalibration;
 
 //these keep track of how many (and which) TCs and PTs to check
 int TCCount = 0;
 int PTCount = 0;
 int TCQueue[6];
 int PTQueue[13];
+
+int temps[6];
+int pressures[13];
+
 
 static CFE_EVS_BinFilter_t  SI_EventFilters[] =
        {  /* Event ID    mask */
@@ -112,15 +118,26 @@ void SI_AppInit(void)
                    SI_HK_TLM_MID,
                    SI_HK_TLM_LNGTH, TRUE);
 
-    DAQ = LJUSB_OpenDevice(1,0,6);//Device Number, reserved, ProductID
+    DAQ = openUSBConnection(-1);
     if(NULL != DAQ){
         CFE_EVS_SendEvent (SI_STARTUP_INF_EID, CFE_EVS_INFORMATION,
                "DAQ Connected Successfully");
     }
     else
     {
-        CFE_EVS_SendEvent(SI_COMMAND_ERR_EID,CFE_EVS_ERROR,
+        CFE_EVS_SendEvent(SI_STARTUP_INF_EID,CFE_EVS_ERROR,
             "NO DAQ CONNECTED! Make sure it's pluggged in and restart the SI app");
+    }
+
+    if((0 == getCalibrationInfo(DAQ, &DAQCalibration)) && 1 == isCalibrationInfoValid(&DAQCalibration))
+    {
+        CFE_EVS_SendEvent (SI_STARTUP_INF_EID, CFE_EVS_INFORMATION,
+               "DAQ Calibration Completed");
+    }
+    else
+    {
+        CFE_EVS_SendEvent (SI_STARTUP_INF_EID, CFE_EVS_INFORMATION,
+               "DAQ CALIBRATION UNSUCCESSFUL!");
     }
 
     CFE_EVS_SendEvent (SI_STARTUP_INF_EID, CFE_EVS_INFORMATION,
@@ -267,7 +284,75 @@ boolean SI_VerifyCmdLength(CFE_SB_MsgPtr_t msg, uint16 ExpectedLength)
 
 } /* End of SI_VerifyCmdLength() */
 
+void SI_AddTC(int TCPin)
+{
+    if(TCCount < 6)
+        TCQueue[TCCount] = TCPin;
+    TCCount++;
+}
+void SI_AddPT(int PTPin)
+{
+    if(PTCount < 8)
+    {
+        boolean present = FALSE;
+        for(int i=0; i<PTCount && (!present); i++)
+        {
+            if(PTPin%8 == PTQueue[i])
+                present = TRUE;
+        }
 
+        if(!present)
+        {
+            PTQueue[PTCount] = PTPin;
+            PTCount++;
+        }
+    }
+}
+
+void SI_ReadTCs(void)
+{
+    for(int i=0; i<TCCount; i++)
+    {
+        double voltage;
+        //arguments 7 & 8 define resolution and settling factor. 
+        //If TC values are crap, increase them.
+        eAIN(DAQ, &DAQCalibration, TCQueue[i], 0, &voltage, LJ_rgBIPP01V, 1, 1, 0, 0, 0);
+        temps[i] = voltage;
+    }
+}
+void SI_ReadPTs(void)
+{
+    for(int i=0; i< PTCount; i++)
+    {
+
+        uint8 sendDataBuff[12];
+
+        sendDataBuff[0]=13; //IOType is BitDirWrite
+        sendDataBuff[1]= MUX_1 + 128;//IONumber(bits 0-4) + Direction (bit 7)
+        sendDataBuff[2]=11; //IOType is BitStateWrite
+        sendDataBuff[3]=//IONumber(bits 0-4) + State (bit 7)
+
+        sendDataBuff[4]=13//IOType is BitDirWrite
+        sendDataBuff[5]= MUX_2 + 128; //IONumber(bits 0-4) + Direction (bit 7)
+        sendDataBuff[6]=11//IOType is BitStateWrite
+        sendDataBuff[7]=//IONumber(bits 0-4) + State (bit 7)
+
+        sendDataBuff[8]=13//IOType is BitDirWrite
+        sendDataBuff[9]= MUX_3 + 128; //IONumber(bits 0-4) + Direction (bit 7)
+        sendDataBuff[10]=11//IOType is BitStateWrite
+        sendDataBuff[11]=//IONumber(bits 0-4) + State (bit 7)
+        
+        if(ehFeedback(DAQ, ))
+
+        uint8 *result = (uint8)malloc(sizeof(uint8)*3);
+        SI_ADC(DAQ, &result);
+        //combine bytes 2 and 3 to get an int, then convert to voltage
+        pressures[i] = (result[1]*256 + result[2])*(5.044/65535);
+        
+        free(result);
+        result = NULL;
+    }
+}
 
 
 
