@@ -36,10 +36,10 @@ u6CalibrationInfo DAQCalibration;
 int TCCount = 0;
 int PTCount = 0;
 int TCQueue[6];
-int PTQueue[13];
+int PTQueue[8];
 
 int temps[6];
-int pressures[13];
+int pressures[16];
 
 
 static CFE_EVS_BinFilter_t  SI_EventFilters[] =
@@ -322,35 +322,41 @@ void SI_ReadTCs(void)
 }
 void SI_ReadPTs(void)
 {
+    int m1state, m2state, m3state;
     for(int i=0; i< PTCount; i++)
     {
+        m1state = PTQueue[i]%2;
+        m2state = (PTQueue[i]%4)/2;
+        m3state = (PTQueue[i]%8)/4;
 
         uint8 sendDataBuff[12];
 
         sendDataBuff[0]=13; //IOType is BitDirWrite
         sendDataBuff[1]= MUX_1 + 128;//IONumber(bits 0-4) + Direction (bit 7)
         sendDataBuff[2]=11; //IOType is BitStateWrite
-        sendDataBuff[3]=//IONumber(bits 0-4) + State (bit 7)
+        sendDataBuff[3]= MUX_1 + (128*m1state)//IONumber(bits 0-4) + State (bit 7)
 
         sendDataBuff[4]=13//IOType is BitDirWrite
         sendDataBuff[5]= MUX_2 + 128; //IONumber(bits 0-4) + Direction (bit 7)
         sendDataBuff[6]=11//IOType is BitStateWrite
-        sendDataBuff[7]=//IONumber(bits 0-4) + State (bit 7)
+        sendDataBuff[7]= MUX_2 + (128*m2state)//IONumber(bits 0-4) + State (bit 7)
 
         sendDataBuff[8]=13//IOType is BitDirWrite
         sendDataBuff[9]= MUX_3 + 128; //IONumber(bits 0-4) + Direction (bit 7)
         sendDataBuff[10]=11//IOType is BitStateWrite
-        sendDataBuff[11]=//IONumber(bits 0-4) + State (bit 7)
+        sendDataBuff[11]= MUX_3 + (128*m3state)//IONumber(bits 0-4) + State (bit 7)
         
-        if(ehFeedback(DAQ, ))
 
-        uint8 *result = (uint8)malloc(sizeof(uint8)*3);
-        SI_ADC(DAQ, &result);
+        uint8 errorcode, errorframe;
+        long muxresult;
+        muxresult = ehFeedback(DAQ, sendDataBuff, 12, &errorcode, &errorframe, NULL, 0);
+
+        uint8 result1[3], result2[3];
+        SI_ADC(DAQ, &result1, &result2);
         //combine bytes 2 and 3 to get an int, then convert to voltage
-        pressures[i] = (result[1]*256 + result[2])*(5.044/65535);
+        pressures[i] = (result1[1]*256 + result1[2])*(5.044/65535);
+        pressures[i+8] = (result2[1]*256 + result2[2])*(5.044/65535);
         
-        free(result);
-        result = NULL;
     }
 }
 
@@ -360,7 +366,7 @@ void SI_ReadPTs(void)
 
 
 
-void SI_ADC(HANDLE DAQ, uint8 *SPIRx)
+void SI_ADC(HANDLE DAQ, uint8 *SPIRx1, *SPIRx2)
 {
     //create SPITx and fill it with 0s, since it doesn't matter what we try to send to the ADC
     uint8 *SPITx = (uint8*)malloc(sizeof(uint8)*3);
@@ -370,48 +376,96 @@ void SI_ADC(HANDLE DAQ, uint8 *SPIRx)
     }
 
     //(Device handle, CSPin, CLKPin, MISOPin, MOSIPin, SIOpts, NumSPIBytes, *SPITx, *SPIRx)
-    errorcode = SPI(DAQ, 0, 1, 2, 3, (uint8)0xC0, 3, *SPITx, *SPIRx);
-    switch(errorcode){
+    int errorcode1;
+    errorcode1 = SPI(DAQ, 0, 1, 2, 3, (uint8)0x80, 3, *SPITx, *SPIRx1);
+    switch(errorcode1){
         case 0: //No error
             break;
         case -1:
             CFE_EVS_SendEvent(SI_LEN_ERR_EID, CFE_EVS_ERROR,
-           "SPI Error : write failed");
+           "SPI 1 Error : write failed");
             break;
         case -2:
         CFE_EVS_SendEvent(SI_LEN_ERR_EID, CFE_EVS_ERROR,
-           "SPI Error : did not write all of the buffer");
+           "SPI 1 Error : did not write all of the buffer");
             break;
         case -3:
         CFE_EVS_SendEvent(SI_LEN_ERR_EID, CFE_EVS_ERROR,
-           "SPI Error : read failed");
+           "SPI 1 Error : read failed");
             break;
         case -4:
         CFE_EVS_SendEvent(SI_LEN_ERR_EID, CFE_EVS_ERROR,
-           "SPI Error : did not write all of the buffer"); 
+           "SPI 1 Error : did not write all of the buffer"); 
             break;
         case -5:
         CFE_EVS_SendEvent(SI_LEN_ERR_EID, CFE_EVS_ERROR,
-           "SPI Error : read buffer has bad checksum"); 
+           "SPI 1 Error : read buffer has bad checksum"); 
             break;
         case -6:
         CFE_EVS_SendEvent(SI_LEN_ERR_EID, CFE_EVS_ERROR,
-           "SPI Error : read buffer has incorrect command byte");
+           "SPI 1 Error : read buffer has incorrect command byte");
             break;
         case -7: 
         CFE_EVS_SendEvent(SI_LEN_ERR_EID, CFE_EVS_ERROR,
-           "SPI Error : read buffer has incorrect number of data words");
+           "SPI 1 Error : read buffer has incorrect number of data words");
             break;
         case -8:
         CFE_EVS_SendEvent(SI_LEN_ERR_EID, CFE_EVS_ERROR,
-           "SPI Error : read buffer has incorrect extended command number");
+           "SPI 1 Error : read buffer has incorrect extended command number");
             break;
         case -9: 
         CFE_EVS_SendEvent(SI_LEN_ERR_EID, CFE_EVS_ERROR,
-           "SPI error : read buffer has bad checksum16");
+           "SPI 1 error : read buffer has bad checksum16");
             break;
         default:
             CFE_EVS_SendEvent(SI_LEN_ERR_EID, CFE_EVS_ERROR,
-           "Unknown SPI Error");
+           "Unknown SPI 1 Error");
+    }
+
+
+    int errorcode2;
+    errorcode2 = SPI(DAQ, 0, 1, 2, 3, (uint8)0x80, 3, *SPITx, *SPIRx2);
+    switch(errorcode2){
+        case 0: //No error
+            break;
+        case -1:
+            CFE_EVS_SendEvent(SI_LEN_ERR_EID, CFE_EVS_ERROR,
+           "SPI 2 Error : write failed");
+            break;
+        case -2:
+        CFE_EVS_SendEvent(SI_LEN_ERR_EID, CFE_EVS_ERROR,
+           "SPI 2 Error : did not write all of the buffer");
+            break;
+        case -3:
+        CFE_EVS_SendEvent(SI_LEN_ERR_EID, CFE_EVS_ERROR,
+           "SPI 2 Error : read failed");
+            break;
+        case -4:
+        CFE_EVS_SendEvent(SI_LEN_ERR_EID, CFE_EVS_ERROR,
+           "SPI 2 Error : did not write all of the buffer"); 
+            break;
+        case -5:
+        CFE_EVS_SendEvent(SI_LEN_ERR_EID, CFE_EVS_ERROR,
+           "SPI 2 Error : read buffer has bad checksum"); 
+            break;
+        case -6:
+        CFE_EVS_SendEvent(SI_LEN_ERR_EID, CFE_EVS_ERROR,
+           "SPI 2 Error : read buffer has incorrect command byte");
+            break;
+        case -7: 
+        CFE_EVS_SendEvent(SI_LEN_ERR_EID, CFE_EVS_ERROR,
+           "SPI 2 Error : read buffer has incorrect number of data words");
+            break;
+        case -8:
+        CFE_EVS_SendEvent(SI_LEN_ERR_EID, CFE_EVS_ERROR,
+           "SPI 2 Error : read buffer has incorrect extended command number");
+            break;
+        case -9: 
+        CFE_EVS_SendEvent(SI_LEN_ERR_EID, CFE_EVS_ERROR,
+           "SPI 2 error : read buffer has bad checksum16");
+            break;
+        default:
+            CFE_EVS_SendEvent(SI_LEN_ERR_EID, CFE_EVS_ERROR,
+           "Unknown SPI 2 Error");
     }
 }

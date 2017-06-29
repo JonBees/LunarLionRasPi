@@ -26,7 +26,7 @@ int SPI(HANDLE hDevice, uint8 CSPin, uint8 CLKPin, uint8 MISOPin, uint8 MOSIPin,
     sendBuff[3] = (uint8)0x3A; //SPI-specific command #
     //sendBuff[4] = //Checksum16(LSB)
     //sendBuff[5] = //Checksum16(MSB)
-    sendBuff[6] = SPIOpts;//(uint8)0xC0 //11000000 -- MSB is AutoCS, second is DisableDirConfig, two LSB are SPIModes 0-3
+    sendBuff[6] = SPIOpts;//(uint8)0x80 //10000000 -- MSB is AutoCS, second is DisableDirConfig, two LSB are SPIModes 0-3
     sendBuff[7] = 0; //SPI Clock Factor (0 is 100khz)
     //sendBuff[8] = // Advanced Options: bits 2-0 -- # of bits in final byte
     sendBuff[9] = CSPin;//CS Pin #
