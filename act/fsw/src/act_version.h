@@ -6,7 +6,7 @@
 **  The Actuation Application header file containing version number
 **
 ** Notes:
-**
+**	1.0.1.0 -- 2017/06/30: Added power supply switching support
 **
 *************************************************************************/
 #ifndef _act_version_h_
@@ -14,8 +14,8 @@
 
 #define ACT_MAJOR_VERSION    1
 #define ACT_MINOR_VERSION    0
-#define ACT_REVISION         0
-#define ACT_MISSION_REV      2
+#define ACT_REVISION         1
+#define ACT_MISSION_REV      0
       
 #endif /* _act_version_h_ */
 

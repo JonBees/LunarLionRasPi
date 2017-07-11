@@ -40,6 +40,10 @@
 #define FC_U_PIN 24
 #define AV_M_PIN 25
 
+#define S2_PIN 26
+#define S3_PIN_ON 27
+#define S3_PIN_RST 28
+
 
 /****************************************************************************/
 /*
@@ -62,7 +66,11 @@ void ACT_OpenFOU(void);
 void ACT_CloseFCU(void);
 void ACT_CloseAVM(void);
 
+void ACT_ENABLES2(void);
+void ACT_DISABLES2(void);
 
+void ACT_ENABLES3(void);
+void ACT_DISABLES3(void);
 
 boolean ACT_VerifyCmdLength(CFE_SB_MsgPtr_t msg, uint16 ExpectedLength);
 

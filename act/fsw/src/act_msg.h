@@ -26,6 +26,12 @@
 #define ACT_CLOSE_FC_U_CC 11
 #define ACT_CLOSE_AV_M_CC 12
 
+#define ACT_ENABLES2_CC      13
+#define ACT_DISABLES2_CC     14
+
+#define ACT_ENABLES3_CC      15
+#define ACT_DISABLES3_CC     16
+
 /*************************************************************************/
 /*
 ** Type definition (generic "no arguments" command)
