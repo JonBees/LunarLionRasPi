@@ -29,6 +29,9 @@ boolean av_m_state;
 boolean s2_state;
 boolean s3_state;
 
+boolean s3_po_state;
+boolean s3_pr_state;
+
 CFE_TIME_SysTime_t curtime;
 CFE_TIME_SysTime_t switchtime;
 CFE_TIME_SysTime_t timediff;
@@ -69,8 +72,9 @@ void ACT_AppMain( void )
     {
         CFE_ES_PerfLogExit(ACT_PERF_ID);
 
-        /*Pend on receipt of command packet -- timeout set to non-blocking*/
-        status = CFE_SB_RcvMsg(&ACTMsgPtr, ACT_CommandPipe, CFE_SB_POLL);
+        /*Pend on receipt of command packet -- timeout set to 5ms 
+        so we don't have an infinite loop of infinite speed*/
+        status = CFE_SB_RcvMsg(&ACTMsgPtr, ACT_CommandPipe, 5);
         
         CFE_ES_PerfLogEntry(ACT_PERF_ID);
 
@@ -79,35 +83,34 @@ void ACT_AppMain( void )
             ACT_ProcessCommandPacket();
         }
 
-        //set the pins that only need to be on/off to their correct state
-        gpio_write(pi, FO_U_PIN, fo_u_state); 
-        gpio_write(pi, FC_U_PIN, fc_u_state); 
-        gpio_write(pi, AV_M_PIN, av_m_state); 
-
-        gpio_write(pi, S2_PIN, s2_state);
-
         curtime = CFE_TIME_GetTime();
         timediff = CFE_TIME_Subtract(curtime, switchtime);
         diffus = CFE_TIME_Sub2MicroSecs(timediff.Subseconds);
 
-        //set the state of s3 and switch if necessary. 
+        /*switch s3's pins off after 250ms because it's a latching relay*/
         if(1 == s3_state)
         {
-            gpio_write(pi, S3_PIN_RST, PI_LOW);
 
-            if((timediff.Seconds < 1) && (diffus < 250000))
-                gpio_write(pi, S3_PIN_ON, PI_HIGH); 
-            else
+            if(((timediff.Seconds > 1) || (diffus > 250000)) && (1 == s3_po_state))
+            {
                 gpio_write(pi, S3_PIN_ON, PI_LOW);
+                s3_po_state = 0;
+                CFE_EVS_SendEvent(ACT_COMMAND_ENABLES3_EID, CFE_EVS_INFORMATION,
+                    "ACT: State 3 enabled");
+            }
+
         }
         else
         {
-            gpio_write(pi,S3_PIN_ON, PI_LOW);
 
-            if((timediff.Seconds < 1) && (diffus < 250000))
-                gpio_write(pi, S3_PIN_RST, PI_HIGH);
-            else
+            if(((timediff.Seconds > 1) || (diffus > 250000)) && (1 == s3_pr_state))
+            {
                 gpio_write(pi, S3_PIN_RST, PI_LOW);
+                s3_pr_state = 0;
+                CFE_EVS_SendEvent(ACT_COMMAND_DISABLES3_EID, CFE_EVS_INFORMATION,
+                    "ACT: State 3 disabled");
+            }
+
         }
 
 
@@ -173,12 +176,16 @@ void ACT_AppInit(void)
         set_mode(pi, S3_PIN_RST, PI_OUTPUT);
     }
 
+    /*initialize state variables*/
     fo_u_state = PI_LOW;
     fc_u_state = PI_LOW;
     av_m_state = PI_LOW;
 
     s2_state = 0;
     s3_state = 0;
+
+    s3_po_state = 0;
+    s3_pr_state = 0;
 
 
     CFE_EVS_SendEvent (ACT_STARTUP_INF_EID, CFE_EVS_INFORMATION,
@@ -187,11 +194,10 @@ void ACT_AppInit(void)
                 ACT_MINOR_VERSION, 
                 ACT_REVISION, 
                 ACT_MISSION_REV);
-				
-    //initialize time such that the s3 poweron checker doesn't try to switch
+                
+    /*initialize time*/ 
     curtime = CFE_TIME_GetTime();
     switchtime = curtime;
-    switchtime.Subseconds = curtime.Subseconds + 300;
 
 } /* End of ACT_AppInit() */
 
@@ -222,7 +228,7 @@ void ACT_ProcessCommandPacket(void)
         default:
             ACT_HkTelemetryPkt.act_command_error_count++;
             CFE_EVS_SendEvent(ACT_COMMAND_ERR_EID,CFE_EVS_ERROR,
-			"ACT: invalid command packet,MID = 0x%x", MsgId);
+            "ACT: invalid command packet,MID = 0x%x", MsgId);
             break;
     }
 
@@ -248,7 +254,7 @@ void ACT_ProcessGroundCommand(void)
         case ACT_NOOP_CC:
             ACT_HkTelemetryPkt.act_command_count++;
             CFE_EVS_SendEvent(ACT_COMMANDNOP_INF_EID,CFE_EVS_INFORMATION,
-			"ACT: NOOP command");
+            "ACT: NOOP command");
             break;
 
         case ACT_RESET_COUNTERS_CC:
@@ -336,7 +342,7 @@ void ACT_ResetCounters(void)
     ACT_HkTelemetryPkt.act_command_error_count = 0;
 
     CFE_EVS_SendEvent(ACT_COMMANDRST_INF_EID, CFE_EVS_INFORMATION,
-		"ACT: RESET command");
+        "ACT: RESET command");
     return;
 
 } /* End of ACT_ResetCounters() */
@@ -379,67 +385,91 @@ boolean ACT_VerifyCmdLength(CFE_SB_MsgPtr_t msg, uint16 ExpectedLength)
 
 void ACT_CloseFOU(void)
 {
-    fo_u_state = PI_HIGH;
+    if(PI_LOW == fo_u_state)
+    {
+        fo_u_state = PI_HIGH;
 
-    gpio_write(pi, FO_U_PIN, PI_HIGH);
+        gpio_write(pi, FO_U_PIN, PI_HIGH);
 
-    CFE_EVS_SendEvent(ACT_COMMAND_CLOSEFOU_EID, CFE_EVS_INFORMATION,
+        CFE_EVS_SendEvent(ACT_COMMAND_CLOSEFOU_EID, CFE_EVS_INFORMATION,
             "ACT: Closing FO_U");
+    }
+    
         return;
 }
 
 void ACT_OpenFCU(void)
 {
-    fc_u_state = PI_HIGH;
+    if(PI_LOW == fc_u_state)
+    {
+        fc_u_state = PI_HIGH;
 
-    gpio_write(pi, FC_U_PIN, PI_HIGH);
+        gpio_write(pi, FC_U_PIN, PI_HIGH);
 
-    CFE_EVS_SendEvent(ACT_COMMAND_OPENFCU_EID, CFE_EVS_INFORMATION,
+        CFE_EVS_SendEvent(ACT_COMMAND_OPENFCU_EID, CFE_EVS_INFORMATION,
             "ACT: Opening FC_U");
+    }
+    
         return;
 }
 
 void ACT_OpenAVM(void)
 {
-    av_m_state = PI_HIGH;
+    if(PI_LOW == av_m_state)
+    {
+        av_m_state = PI_HIGH;
 
-    gpio_write(pi, AV_M_PIN, PI_HIGH);
+        gpio_write(pi, AV_M_PIN, PI_HIGH);
 
-    CFE_EVS_SendEvent(ACT_COMMAND_OPENAVM_EID, CFE_EVS_INFORMATION,
+        CFE_EVS_SendEvent(ACT_COMMAND_OPENAVM_EID, CFE_EVS_INFORMATION,
             "ACT: Opening AV_M");
+    }
+    
         return;
 }
 
 void ACT_OpenFOU(void)
 {
-    fo_u_state = PI_LOW;
+    if(PI_HIGH == fo_u_state)
+    {
+        fo_u_state = PI_LOW;
 
-    gpio_write(pi, FO_U_PIN, PI_LOW);
+        gpio_write(pi, FO_U_PIN, PI_LOW);
 
-    CFE_EVS_SendEvent(ACT_COMMAND_OPENFOU_EID, CFE_EVS_INFORMATION,
+        CFE_EVS_SendEvent(ACT_COMMAND_OPENFOU_EID, CFE_EVS_INFORMATION,
             "ACT: Opening FO_U");
+    }
+    
         return;
 }
 
 void ACT_CloseFCU(void)
 {
-    fc_u_state = PI_LOW;
+    if(PI_HIGH == fc_u_state)
+    {
+        fc_u_state = PI_LOW;
 
-    gpio_write(pi, FC_U_PIN, PI_LOW);
+        gpio_write(pi, FC_U_PIN, PI_LOW);
 
-    CFE_EVS_SendEvent(ACT_COMMAND_CLOSEFCU_EID, CFE_EVS_INFORMATION,
+        CFE_EVS_SendEvent(ACT_COMMAND_CLOSEFCU_EID, CFE_EVS_INFORMATION,
             "ACT: Closing FC_U");
+    }
+    
         return;
 }
 
 void ACT_CloseAVM(void)
 {
-    av_m_state = PI_LOW;
+    if(PI_HIGH == av_m_state)
+    {
+        av_m_state = PI_LOW;
 
-    gpio_write(pi, AV_M_PIN, PI_LOW);
+        gpio_write(pi, AV_M_PIN, PI_LOW);
 
-    CFE_EVS_SendEvent(ACT_COMMAND_CLOSEAVM_EID, CFE_EVS_INFORMATION,
+        CFE_EVS_SendEvent(ACT_COMMAND_CLOSEAVM_EID, CFE_EVS_INFORMATION,
             "ACT: Closing AV_M");
+    }
+    
         return;
 }
 
@@ -482,6 +512,9 @@ void ACT_ENABLES3(void)
         gpio_write(pi, S3_PIN_ON, PI_HIGH);
         gpio_write(pi, S3_PIN_RST, PI_LOW);
 
+        s3_po_state = 1;
+        s3_pr_state = 0;
+
         switchtime = CFE_TIME_GetTime();
         CFE_EVS_SendEvent(ACT_COMMAND_ENABLES3_EID, CFE_EVS_INFORMATION,
             "ACT: Enabling State 3");
@@ -497,6 +530,9 @@ void ACT_DISABLES3(void)
 
         gpio_write(pi, S3_PIN_RST, PI_HIGH);
         gpio_write(pi, S3_PIN_ON, PI_LOW);
+
+        s3_pr_state = 1;
+        s3_po_state = 0;
 
         switchtime = CFE_TIME_GetTime();
         CFE_EVS_SendEvent(ACT_COMMAND_DISABLES3_EID, CFE_EVS_INFORMATION,
