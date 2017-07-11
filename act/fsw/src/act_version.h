@@ -6,6 +6,7 @@
 **  The Actuation Application header file containing version number
 **
 ** Notes:
+**  1.0.1.1 -- 2017/07/11: Added actual handling for ps switch commands
 **	1.0.1.0 -- 2017/06/30: Added power supply switching support
 **
 *************************************************************************/
@@ -15,7 +16,7 @@
 #define ACT_MAJOR_VERSION    1
 #define ACT_MINOR_VERSION    0
 #define ACT_REVISION         1
-#define ACT_MISSION_REV      0
+#define ACT_MISSION_REV      1
       
 #endif /* _act_version_h_ */
 

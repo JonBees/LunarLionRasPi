@@ -22,15 +22,17 @@
 ** global data
 */
 
-boolean fo_u_state = PI_LOW;
-boolean fc_u_state = PI_LOW;
-boolean av_m_state = PI_LOW;
+boolean fo_u_state;
+boolean fc_u_state;
+boolean av_m_state;
 
-boolean s2_state = 0;
-boolean s3_state = 0;
+boolean s2_state;
+boolean s3_state;
 
 CFE_TIME_SysTime_t curtime;
 CFE_TIME_SysTime_t switchtime;
+CFE_TIME_SysTime_t timediff;
+uint32 diffus;
 
 int pi;
 
@@ -85,13 +87,15 @@ void ACT_AppMain( void )
         gpio_write(pi, S2_PIN, s2_state);
 
         curtime = CFE_TIME_GetTime();
+        timediff = CFE_TIME_Subtract(curtime, switchtime);
+        diffus = CFE_TIME_Sub2MicroSecs(timediff.Subseconds);
 
         //set the state of s3 and switch if necessary. 
         if(1 == s3_state)
         {
             gpio_write(pi, S3_PIN_RST, PI_LOW);
 
-            if(switchtime.Subseconds+225 > curtime.Subseconds)
+            if((timediff.Seconds < 1) && (diffus < 250000))
                 gpio_write(pi, S3_PIN_ON, PI_HIGH); 
             else
                 gpio_write(pi, S3_PIN_ON, PI_LOW);
@@ -100,7 +104,7 @@ void ACT_AppMain( void )
         {
             gpio_write(pi,S3_PIN_ON, PI_LOW);
 
-            if(switchtime.Subseconds+225 > curtime.Subseconds)
+            if((timediff.Seconds < 1) && (diffus < 250000))
                 gpio_write(pi, S3_PIN_RST, PI_HIGH);
             else
                 gpio_write(pi, S3_PIN_RST, PI_LOW);
@@ -168,6 +172,14 @@ void ACT_AppInit(void)
         set_mode(pi, S3_PIN_ON, PI_OUTPUT);
         set_mode(pi, S3_PIN_RST, PI_OUTPUT);
     }
+
+    fo_u_state = PI_LOW;
+    fc_u_state = PI_LOW;
+    av_m_state = PI_LOW;
+
+    s2_state = 0;
+    s3_state = 0;
+
 
     CFE_EVS_SendEvent (ACT_STARTUP_INF_EID, CFE_EVS_INFORMATION,
                "Actuation App Initialized. Version %d.%d.%d.%d",
@@ -267,6 +279,21 @@ void ACT_ProcessGroundCommand(void)
             ACT_HkTelemetryPkt.act_command_count++;
             ACT_CloseAVM();
             break;
+        case ACT_ENABLES2_CC:
+            ACT_HkTelemetryPkt.act_command_count++;
+            ACT_ENABLES2();
+            break;
+        case ACT_DISABLES2_CC:
+            ACT_HkTelemetryPkt.act_command_count++;
+            ACT_DISABLES2();
+            break;
+        case ACT_ENABLES3_CC:
+            ACT_HkTelemetryPkt.act_command_count++;
+            ACT_ENABLES3();
+            break;
+        case ACT_DISABLES3_CC:
+            ACT_HkTelemetryPkt.act_command_count++;
+            ACT_DISABLES3();
             
 
         /* default case already found during FC vs length test */
