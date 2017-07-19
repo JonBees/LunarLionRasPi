@@ -28,6 +28,9 @@ SI_hk_tlm_t    SI_HkTelemetryPkt;
 CFE_SB_PipeId_t    SI_CommandPipe;
 CFE_SB_MsgPtr_t    SIMsgPtr;
 
+
+int ReadingsArraySize;
+
 //Handle and calibration info for the DAQ
 HANDLE DAQ;
 u6CalibrationInfo DAQCalibration;
@@ -35,12 +38,12 @@ u6CalibrationInfo DAQCalibration;
 //these keep track of how many (and which) TCs and PTs to check
 int TCCount = 0;
 int PTCount = 0;
-int TCQueue[6];
-int PTQueue[8];
+SI_Sensor_t TCQueue[8];
+SI_Sensor_t PTQueue[8];
 
-int temps[6];
-int pressures[16];
+uint8 *SPITx;
 
+char LogFilename[OS_MAX_PATH_LEN];
 
 static CFE_EVS_BinFilter_t  SI_EventFilters[] =
        {  /* Event ID    mask */
@@ -79,6 +82,31 @@ void SI_AppMain( void )
         {
             SI_ProcessCommandPacket();
         }
+
+        SI_AddPT(PT1);
+        SI_AddPT(PT2);
+        SI_AddPT(PT3);
+        SI_AddPT(PT4);
+        SI_AddTC(TC1);
+        SI_AddTC(TC2);
+
+        if(ReadingsArraySize > 240)
+        {
+        int i = SI_WriteFile();
+            if(i >= 0)
+            {
+            }
+            else
+            {
+                CFE_EVS_SendEvent (SI_COMMAND_ERR_EID, CFE_EVS_ERROR,
+                   "FAILED TO WRITE TO FILE: Error %d !", i);
+            }
+        }
+
+        SI_ReadCurrent();
+        SI_ReadVoltage();
+        SI_ReadPTs();
+        SI_ReadTCs();
     }
 
     CFE_ES_ExitApp(RunStatus);
@@ -118,6 +146,22 @@ void SI_AppInit(void)
                    SI_HK_TLM_MID,
                    SI_HK_TLM_LNGTH, TRUE);
 
+
+
+
+    /*if(CFE_SUCCESS == SI_TableInit())
+    {
+        CFE_EVS_SendEvent(SI_STARTUP_INF_EID,CFE_EVS_INFORMATION,
+            "Successfully initialized SI table.");
+    }
+    else
+    {
+        CFE_EVS_SendEvent(SI_STARTUP_INF_EID,CFE_EVS_ERROR,
+            "FAILED TO INITIALIZE SI TABLE!");
+    }*/
+
+    ReadingsArraySize = 0;
+
     DAQ = openUSBConnection(-1);
     if(NULL != DAQ){
         CFE_EVS_SendEvent (SI_STARTUP_INF_EID, CFE_EVS_INFORMATION,
@@ -129,16 +173,36 @@ void SI_AppInit(void)
             "NO DAQ CONNECTED! Make sure it's pluggged in and restart the SI app");
     }
 
-    if((0 == getCalibrationInfo(DAQ, &DAQCalibration)) && 1 == isCalibrationInfoValid(&DAQCalibration))
+    if((0 == getCalibrationInfo(DAQ, &DAQCalibration)) && (1 == isCalibrationInfoValid(&DAQCalibration)))
     {
         CFE_EVS_SendEvent (SI_STARTUP_INF_EID, CFE_EVS_INFORMATION,
                "DAQ Calibration Completed");
     }
     else
     {
-        CFE_EVS_SendEvent (SI_STARTUP_INF_EID, CFE_EVS_INFORMATION,
+        CFE_EVS_SendEvent (SI_STARTUP_INF_EID, CFE_EVS_ERROR,
                "DAQ CALIBRATION UNSUCCESSFUL!");
     }
+
+    //create SPITx and fill it with 0s, since it doesn't matter what we try to send to the ADC
+    *SPITx = (uint8*)malloc(sizeof(uint8)*3);
+    for(int i=0; i<3; i++)
+    {
+        SPITx[i] = 0;
+    }
+
+    int i = SI_CreateFile();
+    if(i >= 0)
+    {
+        sprintf(LogFilename, "/logfiles/log%d.csv", i+1);
+        CFE_EVS_SendEvent (SI_STARTUP_INF_EID, CFE_EVS_INFORMATION,
+               "Logfile Created: %s", LogFilename);
+    }
+    else
+        CFE_EVS_SendEvent (SI_STARTUP_INF_EID, CFE_EVS_ERROR,
+               "LOGFILE CREATION UNSUCCESSFUL!");
+
+
 
     CFE_EVS_SendEvent (SI_STARTUP_INF_EID, CFE_EVS_INFORMATION,
                "Sensor In App Initialized. Version %d.%d.%d.%d",
@@ -284,50 +348,131 @@ boolean SI_VerifyCmdLength(CFE_SB_MsgPtr_t msg, uint16 ExpectedLength)
 
 } /* End of SI_VerifyCmdLength() */
 
-void SI_AddTC(int TCPin)
+/*int32 SI_TableInit(void)
+{
+    int32 status = CFE_SUCCESS;
+
+    status = CFE_TBL_REGISTER(&ReadingsTableHandle, "ReadingsTable", 
+        (sizeof(si_readings_table_entry_t) * SI_READINGS_TABLE_ENTRIES), 
+        CFE_TBL_OPT_SINGL_BUFFER | CFE_TBL_OPT_DUMP_ONLY, NULL);
+    if(status != CFE_SUCCESS)
+    {
+        CFE_EVS_SendEvent(SI_STARTUP_INF_EID, CFE_EVS_ERROR,
+            "Error registering ReadingsTable,RC=0x%08X",(unsigned int)status);
+        return status;
+    }
+
+    status = CFE_TBL_Manage(ReadingsTableHandle)
+    if(status != CFE_SUCCESS)
+    {
+        CFE_EVS_SendEvent(SI_STARTUP_INF_EID, CFE_EVS_ERROR,
+            "Error managing ReadingsTable,RC=0x%08X",(unsigned int)status);
+        return status;
+    }
+    status = CFE_TBL_GetAddress((void *) (& ReadingsTablePointer), ReadingsTableHandle);
+    if(status != CFE_SUCCESS)
+    {
+        CFE_EVS_SendEvent(SI_STARTUP_INF_EID, CFE_EVS_ERROR,
+            "Error gettting the address of ReadingsTable,RC=0x%08X",(unsigned int)status);
+        return status;
+    }
+    ReadingsArraySize = 0;
+    return CFE_SUCCESS;
+}*/
+
+
+void SI_AddTC(SI_Sensor_t TC)
 {
     if(TCCount < 6)
-        TCQueue[TCCount] = TCPin;
+        TCQueue[TCCount] = TC;
     TCCount++;
 }
-void SI_AddPT(int PTPin)
+
+void SI_AddPT(SI_Sensor_t PT)
 {
     if(PTCount < 8)
     {
         boolean present = FALSE;
         for(int i=0; i<PTCount && (!present); i++)
         {
-            if(PTPin%8 == PTQueue[i])
+            if(PT.pinNum%8 == PTQueue[i].pinNum)
                 present = TRUE;
         }
 
         if(!present)
         {
-            PTQueue[PTCount] = PTPin;
+            PTQueue[PTCount] = PT;
             PTCount++;
         }
     }
 }
 
+void SI_ReadVoltage(void)
+{
+    SI_Reading_t *curEntry;
+    double voltage;
+
+    eAIN(DAQ, &DAQCalibration, VBAT, 0, &voltage, LJ_rgBIP10V, 1, 1, 0, 0, 0);
+
+    curEntry = &SI_Readings[ReadingsArraySize];
+
+    (*curEntry).readingTime = CFE_TIME_GetTime();
+    (*curEntry).sensorID = VBAT;
+    (*curEntry).sensorValue = (int)voltage;
+
+    ReadingsArraySize++;
+}
+
+void SI_ReadCurrent(void)
+{
+    SI_Reading_t *curEntry;
+    double voltage;
+
+    eAIN(DAQ, &DAQCalibration, CRNT, 0, &voltage, LJ_rgBIP1V, 1, 1, 0, 0, 0)
+
+    curEntry = &SI_Readings[ReadingsArraySize];
+
+    (*curEntry).readingTime = CFE_TIME_GetTime();
+    (*curEntry).sensorID = CRNT;
+    (*curEntry).sensorValue = (int)voltage;
+
+    ReadingsArraySize++;
+}
+
+
 void SI_ReadTCs(void)
 {
+    SI_Reading_t *curEntry;
+
     for(int i=0; i<TCCount; i++)
     {
         double voltage;
         //arguments 7 & 8 define resolution and settling factor. 
         //If TC values are crap, increase them.
-        eAIN(DAQ, &DAQCalibration, TCQueue[i], 0, &voltage, LJ_rgBIPP01V, 1, 1, 0, 0, 0);
-        temps[i] = voltage;
+        eAIN(DAQ, &DAQCalibration, TCQueue[i].pinNum, 0, &voltage, LJ_rgBIPP01V, 1, 1, 0, 0, 0);
+        
+        //get the first unfilled entry in the array.
+        curEntry = &SI_Readings[ReadingsArraySize];
+        //fill out that entry's data
+        (*curEntry).readingTime = CFE_TIME_GetTime();
+        (*curEntry).sensorID = TCQueue[i];
+        (*curEntry).sensorValue = (int)voltage;
+
+        ReadingsArraySize++;
     }
+    TCCount = 0;
 }
+
 void SI_ReadPTs(void)
 {
+    //si_readings_table_entry_t *curEntry;
+
     int m1state, m2state, m3state;
-    for(int i=0; i< PTCount; i++)
+    for(int i=0; i < PTCount; i++)
     {
-        m1state = PTQueue[i]%2;
-        m2state = (PTQueue[i]%4)/2;
-        m3state = (PTQueue[i]%8)/4;
+        m1state = (PTQueue[i].pinNum)%2;
+        m2state = ((PTQueue[i].pinNum)%4)/2;
+        m3state = ((PTQueue[i].pinNum)%8)/4;
 
         uint8 sendDataBuff[12];
 
@@ -353,31 +498,112 @@ void SI_ReadPTs(void)
 
         uint8 result1[3], result2[3];
         SI_ADC(DAQ, &result1, &result2);
+
+        //get the first unfilled entry in the table.
+        curEntry = &SI_Readings[ReadingsArraySize];
+        (*curEntry).readingTime = CFE_TIME_GetTime();
+        (*curEntry).sensorID = PTQueue[i];
         //combine bytes 2 and 3 to get an int, then convert to voltage
-        pressures[i] = (result1[1]*256 + result1[2])*(5.044/65535);
-        pressures[i+8] = (result2[1]*256 + result2[2])*(5.044/65535);
-        
+        (*curEntry).sensorValue = (int)(result1[1]*256 + result1[2])*(5.044/65535);
+
+        ReadingsArraySize++;
+
+        curEntry = &SI_Readings[ReadingsArraySize];
+        (*curEntry).readingTime = CFE_TIME_GetTime();
+        (*curEntry).sensorID = PTQueue[i].linkedSensor;
+        (*curEntry).sensorValue = (int)(result2[1]*256 + result2[2])*(5.044/65535);
+
+        ReadingsArraySize++;
     }
+    PTCount = 0;
 }
 
+int SI_CreateFile(void)
+{
+    int32 FileDescriptor;
+    boolean FileExists = 1;
+    int i;
+    char filename[OS_MAX_PATH_LEN];
 
+    //iterate through all possible logfiles until we find one that doesn't exist
+    for(i=0; (!FileExists) || (i<999); i++)
+    {
+        sprintf(filename, "/logfiles/log%d.csv", i+1)
+        FileDescriptor = OS_open(filename, OS_READ_ONLY, 0);
+        
+        if(FileDescriptor >= 0)
+            FileExists = 1;
+        else
+            FileExists = 0;
 
+        OS_close(FileDescriptor);
+    }
+    //return an error if all 1000 logfiles exist somehow.
+    if(FileExists)
+        return -1;
 
+    //actually create the file.
+    FileDescriptor = OS_creat(filename, OS_WRITE_ONLY);
 
+    //write a CSV header
+    char header[34];
+    sprintf(header, "readingTime,sensorID,sensorValue\n");
+    FileDescriptor = OS_open(filename, OS_READ_WRITE, 0);
+    OS_write(FileDescriptor, &header, sizeof(header));
 
+    OS_close(FileDescriptor);
+
+    //send back which logfile we've created
+    return i;
+}
+
+int SI_WriteFile(void)
+{
+    int32 FileDescriptor;
+    int32 Offset;
+    uint32 BytesWritten;
+
+    //create an array of chars with enough space to hold all of the text we're going to put into the file
+    //20 chars each for seconds and microseconds (uint32), 4 for sensorID (char[4]), 5 for sensorValue (int)
+    //plus three for commas and two for the \n character (which may just need 1? not taking chances though)
+    char FileText[sizeof(SI_Readings)*54];
+    uint32 DataLength = 0;
+
+    for(int i=0; i<ReadingsArraySize; i++)
+    {
+        //create a char array for each line
+        char EntryText[54];
+
+        //pull the variables we're recording out of the readings array
+        uint32 tSec = SI_Readings[i].readingTime.Seconds;
+        uint32 tMicrosec = CFE_TIME_Sub2MicroSecs(SI_Readings[i].readingTime.Subseconds);
+        int sVal = SI_Readings[i].sensorValue;
+
+        //turn those variables into a string
+        snprintf(EntryText, sizeof(EntryText), "%ld,%ld,%s,%d\n", tSec, tMicrosec, SI_Readings[i].sensorID, SVal);
+        //add that string to the end of FileText
+        strncat(FileText, EntryText, sizeof(EntryText));
+
+        DataLength += strlen(EntryText);
+    }
+
+    //open the file, find our current spot, write, and close.
+    FileDescriptor = OS_open(LogFilename, OS_READ_WRITE, 0);
+    Offset = OS_lseek(FileDescriptor, 0, OS_SEEK_CUR);
+    BytesWritten = OS_write(FileDescriptor, &FileText, DataLength);
+    OS_close(FileDescriptor);
+    if(BytesWritten != DataLength)
+        return -1;
+    else
+        return BytesWritten;
+}
 
 void SI_ADC(HANDLE DAQ, uint8 *SPIRx1, *SPIRx2)
 {
-    //create SPITx and fill it with 0s, since it doesn't matter what we try to send to the ADC
-    uint8 *SPITx = (uint8*)malloc(sizeof(uint8)*3);
-    for(int i=0; i<3; i++)
-    {
-        SPITx[i] = 0;
-    }
 
     //(Device handle, CSPin, CLKPin, MISOPin, MOSIPin, SIOpts, NumSPIBytes, *SPITx, *SPIRx)
     int errorcode1;
-    errorcode1 = SPI(DAQ, 0, 1, 2, 3, (uint8)0x80, 3, *SPITx, *SPIRx1);
+    errorcode1 = SPI(DAQ, 0, 1, 2, 3, (uint8)0x80, 3, &SPITx, &SPIRx1);
     switch(errorcode1){
         case 0: //No error
             break;
@@ -424,7 +650,7 @@ void SI_ADC(HANDLE DAQ, uint8 *SPIRx1, *SPIRx2)
 
 
     int errorcode2;
-    errorcode2 = SPI(DAQ, 0, 1, 2, 3, (uint8)0x80, 3, *SPITx, *SPIRx2);
+    errorcode2 = SPI(DAQ, 0, 1, 2, 3, (uint8)0x80, 3, &SPITx, &SPIRx2);
     switch(errorcode2){
         case 0: //No error
             break;

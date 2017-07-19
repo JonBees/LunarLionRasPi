@@ -41,7 +41,7 @@
 #define AV_M_PIN 25
 
 #define S2_PIN 17
-#define S3_PIN_ON 21
+#define S3_PIN_ON 27
 #define S3_PIN_RST 22
 
 
