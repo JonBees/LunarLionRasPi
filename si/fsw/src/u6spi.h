@@ -32,3 +32,5 @@ int SPI(HANDLE hDevice,
 		uint8 *SPIRx);
 //handles SPI communication with the U6
 //based on the I2C implementation in u6.c
+
+#endif /* _u6spi_h_ */

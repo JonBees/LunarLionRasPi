@@ -10,12 +10,12 @@
 **   Include Files:
 */
 
-#include "SI_app.h"
-#include "SI_perfids.h"
-#include "SI_msgids.h"
-#include "SI_msg.h"
-#include "SI_events.h"
-#include "SI_version.h"
+#include "si_app.h"
+#include "si_perfids.h"
+#include "si_msgids.h"
+#include "si_msg.h"
+#include "si_events.h"
+#include "si_version.h"
 
 
 /*
@@ -41,7 +41,7 @@ int PTCount = 0;
 SI_Sensor_t TCQueue[8];
 SI_Sensor_t PTQueue[8];
 
-uint8 *SPITx;
+uint8 SPITx[3];
 
 char LogFilename[OS_MAX_PATH_LEN];
 
@@ -62,7 +62,7 @@ void SI_AppMain( void )
     int32  status;
     uint32 RunStatus = CFE_ES_APP_RUN;
 
-    CFE_ES_PerfLogEntry(ACT_PERF_ID);
+    CFE_ES_PerfLogEntry(SI_PERF_ID);
 
     SI_AppInit();
 
@@ -147,7 +147,7 @@ void SI_AppInit(void)
                    SI_HK_TLM_LNGTH, TRUE);
 
 
-
+    SI_AssignValues();
 
     /*if(CFE_SUCCESS == SI_TableInit())
     {
@@ -185,7 +185,6 @@ void SI_AppInit(void)
     }
 
     //create SPITx and fill it with 0s, since it doesn't matter what we try to send to the ADC
-    *SPITx = (uint8*)malloc(sizeof(uint8)*3);
     for(int i=0; i<3; i++)
     {
         SPITx[i] = 0;
@@ -212,6 +211,39 @@ void SI_AppInit(void)
                 SI_MISSION_REV);
 				
 } /* End of SI_AppInit() */
+
+void SI_AssignValues(void)
+{
+    //Mux 1
+    PT1.pinNum = 0; PT1.linkedSensor = &PT8; strncpy(PT1.name, "PT1", 4);
+    PT2.pinNum = 1; PT2.linkedSensor = &PT9; strncpy(PT2.name, "PT2", 4);
+    PT3.pinNum = 2; PT3.linkedSensor = &PT10; strncpy(PT3.name, "PT3", 4);
+    PT4.pinNum = 3; PT4.linkedSensor = &PT11; strncpy(PT4.name, "PT4", 4);
+    PT5.pinNum = 4; PT5.linkedSensor = &PT12; strncpy(PT5.name, "PT5", 4);
+    PT6.pinNum = 5; PT6.linkedSensor = &PT13; strncpy(PT6.name, "PT6", 4);
+    PT7.pinNum = 6; PT7.linkedSensor = &PT14; strncpy(PT7.name, "PT7", 4);
+    ///Mux 2
+    PT8.pinNum = 7; PT8.linkedSensor = &PT1; strncpy(PT8.name, "PT8", 4);
+    PT9.pinNum = 8; PT9.linkedSensor = &PT2; strncpy(PT9.name, "PT9", 4);
+    PT10.pinNum = 9; PT10.linkedSensor = &PT3; strncpy(PT10.name, "PT10", 4);
+    PT11.pinNum = 10; PT11.linkedSensor = &PT4; strncpy(PT11.name, "PT11", 4);
+    PT12.pinNum = 11; PT12.linkedSensor = &PT5; strncpy(PT12.name, "PT12", 4);
+    PT13.pinNum = 12; PT13.linkedSensor = &PT6; strncpy(PT13.name, "PT13", 4);
+    PT14.pinNum = 13; PT14.linkedSensor = &PT7; strncpy(PT14.name, "PT14", 4);
+    //Analog in
+    TC1.pinNum = 1; strncpy(TC1.name, "TC1", 4);
+    TC2.pinNum = 1; strncpy(TC2.name, "TC2", 4);
+    TC3.pinNum = 1; strncpy(TC3.name, "TC3", 4);
+    TC4.pinNum = 1; strncpy(TC4.name, "TC4", 4);
+    TC5.pinNum = 1; strncpy(TC5.name, "TC5", 4);
+    TC6.pinNum = 1; strncpy(TC6.name, "TC6", 4);
+    VBAT.pinNum = 0; strncpy(VBAT.name, "VBAT", 4);//AIN0
+    CRNT.pinNum = 1; strncpy(CRNT.name, "CRNT", 4);//AIN1
+}
+
+
+
+
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * **/
 /*  Name:  SI_ProcessCommandPacket                                            */
@@ -412,7 +444,7 @@ void SI_ReadVoltage(void)
     SI_Reading_t *curEntry;
     double voltage;
 
-    eAIN(DAQ, &DAQCalibration, VBAT, 0, &voltage, LJ_rgBIP10V, 1, 1, 0, 0, 0);
+    eAIN(DAQ, &DAQCalibration, VBAT.pinNum, 0, &voltage, LJ_rgBIP10V, 1, 1, 0, 0, 0);
 
     curEntry = &SI_Readings[ReadingsArraySize];
 
@@ -428,7 +460,7 @@ void SI_ReadCurrent(void)
     SI_Reading_t *curEntry;
     double voltage;
 
-    eAIN(DAQ, &DAQCalibration, CRNT, 0, &voltage, LJ_rgBIP1V, 1, 1, 0, 0, 0)
+    eAIN(DAQ, &DAQCalibration, CRNT.pinNum, 0, &voltage, LJ_rgBIP1V, 1, 1, 0, 0, 0);
 
     curEntry = &SI_Readings[ReadingsArraySize];
 
@@ -465,7 +497,7 @@ void SI_ReadTCs(void)
 
 void SI_ReadPTs(void)
 {
-    //si_readings_table_entry_t *curEntry;
+    SI_Reading_t *curEntry;
 
     int m1state, m2state, m3state;
     for(int i=0; i < PTCount; i++)
@@ -479,17 +511,17 @@ void SI_ReadPTs(void)
         sendDataBuff[0]=13; //IOType is BitDirWrite
         sendDataBuff[1]= MUX_1 + 128;//IONumber(bits 0-4) + Direction (bit 7)
         sendDataBuff[2]=11; //IOType is BitStateWrite
-        sendDataBuff[3]= MUX_1 + (128*m1state)//IONumber(bits 0-4) + State (bit 7)
+        sendDataBuff[3]= MUX_1 + (128*m1state);//IONumber(bits 0-4) + State (bit 7)
 
-        sendDataBuff[4]=13//IOType is BitDirWrite
+        sendDataBuff[4]=13;//IOType is BitDirWrite
         sendDataBuff[5]= MUX_2 + 128; //IONumber(bits 0-4) + Direction (bit 7)
-        sendDataBuff[6]=11//IOType is BitStateWrite
-        sendDataBuff[7]= MUX_2 + (128*m2state)//IONumber(bits 0-4) + State (bit 7)
+        sendDataBuff[6]=11;//IOType is BitStateWrite
+        sendDataBuff[7]= MUX_2 + (128*m2state);//IONumber(bits 0-4) + State (bit 7)
 
-        sendDataBuff[8]=13//IOType is BitDirWrite
+        sendDataBuff[8]=13;//IOType is BitDirWrite
         sendDataBuff[9]= MUX_3 + 128; //IONumber(bits 0-4) + Direction (bit 7)
-        sendDataBuff[10]=11//IOType is BitStateWrite
-        sendDataBuff[11]= MUX_3 + (128*m3state)//IONumber(bits 0-4) + State (bit 7)
+        sendDataBuff[10]=11;//IOType is BitStateWrite
+        sendDataBuff[11]= MUX_3 + (128*m3state);//IONumber(bits 0-4) + State (bit 7)
         
 
         uint8 errorcode, errorframe;
@@ -497,7 +529,7 @@ void SI_ReadPTs(void)
         muxresult = ehFeedback(DAQ, sendDataBuff, 12, &errorcode, &errorframe, NULL, 0);
 
         uint8 result1[3], result2[3];
-        SI_ADC(DAQ, &result1, &result2);
+        SI_ADC(DAQ, &result1[0], &result2[0]);
 
         //get the first unfilled entry in the table.
         curEntry = &SI_Readings[ReadingsArraySize];
@@ -510,7 +542,7 @@ void SI_ReadPTs(void)
 
         curEntry = &SI_Readings[ReadingsArraySize];
         (*curEntry).readingTime = CFE_TIME_GetTime();
-        (*curEntry).sensorID = PTQueue[i].linkedSensor;
+        (*curEntry).sensorID = *((SI_Sensor_t*)PTQueue[i].linkedSensor);
         (*curEntry).sensorValue = (int)(result2[1]*256 + result2[2])*(5.044/65535);
 
         ReadingsArraySize++;
@@ -528,7 +560,7 @@ int SI_CreateFile(void)
     //iterate through all possible logfiles until we find one that doesn't exist
     for(i=0; (!FileExists) || (i<999); i++)
     {
-        sprintf(filename, "/logfiles/log%d.csv", i+1)
+        sprintf(filename, "/logfiles/log%d.csv", i+1);
         FileDescriptor = OS_open(filename, OS_READ_ONLY, 0);
         
         if(FileDescriptor >= 0)
@@ -580,7 +612,7 @@ int SI_WriteFile(void)
         int sVal = SI_Readings[i].sensorValue;
 
         //turn those variables into a string
-        snprintf(EntryText, sizeof(EntryText), "%ld,%ld,%s,%d\n", tSec, tMicrosec, SI_Readings[i].sensorID, SVal);
+        snprintf(EntryText, sizeof(EntryText), "%ld,%ld,%s,%d\n", tSec, tMicrosec, SI_Readings[i].sensorID.name, sVal);
         //add that string to the end of FileText
         strncat(FileText, EntryText, sizeof(EntryText));
 
@@ -598,12 +630,12 @@ int SI_WriteFile(void)
         return BytesWritten;
 }
 
-void SI_ADC(HANDLE DAQ, uint8 *SPIRx1, *SPIRx2)
+void SI_ADC(HANDLE DAQ, uint8 *SPIRx1, uint8 *SPIRx2)
 {
 
     //(Device handle, CSPin, CLKPin, MISOPin, MOSIPin, SIOpts, NumSPIBytes, *SPITx, *SPIRx)
     int errorcode1;
-    errorcode1 = SPI(DAQ, 0, 1, 2, 3, (uint8)0x80, 3, &SPITx, &SPIRx1);
+    errorcode1 = SPI(DAQ, 0, 1, 2, 3, (uint8)0x80, 3, &SPITx[0], SPIRx1);
     switch(errorcode1){
         case 0: //No error
             break;
@@ -650,7 +682,7 @@ void SI_ADC(HANDLE DAQ, uint8 *SPIRx1, *SPIRx2)
 
 
     int errorcode2;
-    errorcode2 = SPI(DAQ, 0, 1, 2, 3, (uint8)0x80, 3, &SPITx, &SPIRx2);
+    errorcode2 = SPI(DAQ, 0, 1, 2, 3, (uint8)0x80, 3, &SPITx[0], SPIRx2);
     switch(errorcode2){
         case 0: //No error
             break;

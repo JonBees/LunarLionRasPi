@@ -16,9 +16,10 @@
 extern "C"{
 #endif
 
-typedef unsigned char uint8;
+//these conflict with the definitions in the cFE
+/*typedef unsigned char uint8;
 typedef unsigned short uint16;
-typedef unsigned int uint32;
+typedef unsigned int uint32;*/
 
 //Structure for storing calibration constants
 struct U6_CALIBRATION_INFORMATION {
@@ -129,7 +130,7 @@ HANDLE openUSBConnection( int localID);
 void closeUSBConnection( HANDLE hDevice);
 //Closes a HANDLE to a U6 device.
 
-long getTickCount();
+long getTickCount(void);
 //Returns the number of milliseconds that has elasped since the system was
 //started.
 

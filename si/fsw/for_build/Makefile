@@ -33,7 +33,7 @@ SOURCES = $(OBJS:.o=.c)
 ##
 ## Specify extra C Flags needed to build this subsystem
 ##
-LOCAL_COPTS = -llabjackusb
+LOCAL_COPTS = -llabjackusb -std=c99
 
 
 ##
