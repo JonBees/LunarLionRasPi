@@ -1,0 +1,1406 @@
+Starting program: /home/pi/cFE-6.5.0/build/cpu1/exe/core-linux.bin 
+[Thread debugging using libthread_db enabled]
+Using host libthread_db library "/lib/arm-linux-gnueabihf/libthread_db.so.1".
+[New Thread 0x76ff7460 (LWP 2292)]
+[New Thread 0x76be4460 (LWP 2293)]
+[New Thread 0x76be0460 (LWP 2294)]
+[New Thread 0x76bdc460 (LWP 2295)]
+[New Thread 0x76bd8460 (LWP 2296)]
+[New Thread 0x76bd4460 (LWP 2297)]
+[New Thread 0x76bd0460 (LWP 2298)]
+[New Thread 0x76b5b460 (LWP 2299)]
+[New Thread 0x76b3c460 (LWP 2300)]
+[New Thread 0x76b1c460 (LWP 2301)]
+[New Thread 0x769ff460 (LWP 2302)]
+[New Thread 0x76b03460 (LWP 2303)]
+[New Thread 0x769df460 (LWP 2304)]
+[New Thread 0x769bc460 (LWP 2305)]
+[New Thread 0x769a2460 (LWP 2306)]
+[New Thread 0x7698b460 (LWP 2307)]
+[New Thread 0x7696d460 (LWP 2308)]
+[Switching to Thread 0x7696d460 (LWP 2308)]
+
+Breakpoint 1, SI_AppInit ()
+    at /home/pi/cFE-6.5.0/apps/si/fsw/src/si_app.c:173
+173	    DAQ = openUSBConnection(-1);
+[New Thread 0x76955460 (LWP 2309)]
+[New Thread 0x7693e460 (LWP 2310)]
+openUSBConnection (localID=-1)
+    at /home/pi/cFE-6.5.0/apps/si/fsw/src/u6.c:122
+122	    lj_uint16 checksumTotal = 0;
+123	    lj_uint32 dev, numDevices = 0;
+125	    HANDLE hDevice = 0;
+127	    numDevices = LJUSB_GetDevCount(U6_PRODUCT_ID);
+LJUSB_GetDevCount (ProductID=6) at labjackusb.c:1061
+1061	    libusb_device **devs = NULL;
+1062	    ssize_t cnt = 0;
+1063	    int r = 1;
+1064	    unsigned int i = 0;
+1065	    unsigned int ljFoundCount = 0;
+1067	    if (!gIsLibUSBInitialized) {
+1068	        r = libusb_init(&gLJContext);
+libusb_init (context=0x76ec77f4 <gLJContext>) at core.c:2125
+2125		size_t priv_size = usbi_backend.context_priv_size;
+2123	{
+2125		size_t priv_size = usbi_backend.context_priv_size;
+2130		usbi_mutex_static_lock(&default_context_lock);
+2123	{
+2125		size_t priv_size = usbi_backend.context_priv_size;
+2130		usbi_mutex_static_lock(&default_context_lock);
+2125		size_t priv_size = usbi_backend.context_priv_size;
+2130		usbi_mutex_static_lock(&default_context_lock);
+__GI___pthread_mutex_lock (
+    mutex=mutex@entry=0x76eb24f4 <default_context_lock>)
+    at pthread_mutex_lock.c:66
+66	  unsigned int type = PTHREAD_MUTEX_TYPE_ELISION (mutex);
+70	  if (__builtin_expect (type & ~(PTHREAD_MUTEX_KIND_MASK_NP
+66	  unsigned int type = PTHREAD_MUTEX_TYPE_ELISION (mutex);
+63	{
+70	  if (__builtin_expect (type & ~(PTHREAD_MUTEX_KIND_MASK_NP
+74	  if (__builtin_expect (type == PTHREAD_MUTEX_TIMED_NP, 1))
+79	      LLL_MUTEX_LOCK (mutex);
+80	      assert (mutex->__data.__owner == 0);
+158	  pid_t id = THREAD_GETMEM (THREAD_SELF, tid);
+__aeabi_read_tp ()
+    at ../ports/sysdeps/unix/sysv/linux/arm/aeabi_read_tp.S:52
+52		mov	r0, #0xffff0fff
+53		sub	pc, r0, #31
+__GI___pthread_mutex_lock (
+    mutex=mutex@entry=0x76eb24f4 <default_context_lock>)
+    at pthread_mutex_lock.c:163
+163	  ++mutex->__data.__nusers;
+158	  pid_t id = THREAD_GETMEM (THREAD_SELF, tid);
+168	  return 0;
+163	  ++mutex->__data.__nusers;
+161	  mutex->__data.__owner = id;
+163	  ++mutex->__data.__nusers;
+169	}
+libusb_init (context=0x76ec77f4 <gLJContext>) at core.c:2132
+2132		if (!timestamp_origin.tv_sec) {
+2133			usbi_backend.clock_gettime(USBI_CLOCK_REALTIME, &timestamp_origin);
+op_clock_gettime (clk_id=clk_id@entry=1, 
+    tp=tp@entry=0x76eb24ec <timestamp_origin>)
+    at os/linux_usbfs.c:2701
+2701		switch (clk_id) {
+2705			return clock_gettime(CLOCK_REALTIME, tp);
+__GI___clock_gettime (clock_id=0, tp=0x76eb24ec <timestamp_origin>)
+    at ../sysdeps/unix/clock_gettime.c:96
+96	  switch (clock_id)
+93	{
+115	      SYSDEP_GETTIME_CPU (clock_id, tp);
+96	  switch (clock_id)
+99	      SYSDEP_GETTIME;
+115	      SYSDEP_GETTIME_CPU (clock_id, tp);
+134	}
+libusb_init (context=0x76ec77f4 <gLJContext>) at core.c:2136
+2136		if (!context && usbi_default_context) {
+2143		ctx = calloc(1, sizeof(*ctx) + priv_size);
+__libc_calloc (n=1, elem_size=344) at malloc.c:3174
+3174	  if (__builtin_expect ((n | elem_size) >= HALF_INTERNAL_SIZE_T, 0))
+3161	{
+3174	  if (__builtin_expect ((n | elem_size) >= HALF_INTERNAL_SIZE_T, 0))
+3161	{
+3171	  bytes = n * elem_size;
+3161	{
+3174	  if (__builtin_expect ((n | elem_size) >= HALF_INTERNAL_SIZE_T, 0))
+3184	    atomic_forced_read (__malloc_hook);
+3185	  if (__builtin_expect (hook != NULL, 0))
+3197	  arena_get (av, sz);
+__aeabi_read_tp ()
+    at ../ports/sysdeps/unix/sysv/linux/arm/aeabi_read_tp.S:52
+52		mov	r0, #0xffff0fff
+53		sub	pc, r0, #31
+arena_get2 (size=size@entry=344, avoid_arena=avoid_arena@entry=0x0, 
+    a_tsd=<optimized out>) at arena.c:857
+857	  a = get_free_list ();
+get_free_list () at arena.c:851
+851	arena_get2 (mstate a_tsd, size_t size, mstate avoid_arena)
+857	  a = get_free_list ();
+get_free_list () at arena.c:789
+789	  mstate result = free_list;
+arena_get2 (size=size@entry=344, avoid_arena=avoid_arena@entry=0x0, 
+    a_tsd=<optimized out>) at arena.c:851
+851	arena_get2 (mstate a_tsd, size_t size, mstate avoid_arena)
+857	  a = get_free_list ();
+get_free_list () at arena.c:790
+790	  if (result != NULL)
+arena_get2 (size=size@entry=344, avoid_arena=avoid_arena@entry=0x0, 
+    a_tsd=<optimized out>) at arena.c:851
+851	arena_get2 (mstate a_tsd, size_t size, mstate avoid_arena)
+857	  a = get_free_list ();
+get_free_list () at arena.c:790
+790	  if (result != NULL)
+arena_get2 (size=size@entry=344, avoid_arena=avoid_arena@entry=0x0, 
+    a_tsd=<optimized out>) at arena.c:851
+851	arena_get2 (mstate a_tsd, size_t size, mstate avoid_arena)
+857	  a = get_free_list ();
+get_free_list () at arena.c:790
+790	  if (result != NULL)
+arena_get2 (size=size@entry=344, avoid_arena=avoid_arena@entry=0x0, 
+    a_tsd=<optimized out>) at arena.c:861
+861	      if (narenas_limit == 0)
+888	          if (catomic_compare_and_exchange_bool_acq (&narenas, n + 1, n))
+886	      if (__builtin_expect (n <= narenas_limit - 1, 0))
+888	          if (catomic_compare_and_exchange_bool_acq (&narenas, n + 1, n))
+890	          a = _int_new_arena (size);
+_int_new_arena (size=344) at arena.c:741
+741	  h = new_heap (size + (sizeof (*h) + sizeof (*a) + MALLOC_ALIGNMENT),
+new_heap (size=size@entry=1472, top_pad=131072) at arena.c:528
+528	  size_t page_mask = GLRO (dl_pagesize) - 1;
+527	{
+533	  if (size + top_pad < HEAP_MIN_SIZE)
+528	  size_t page_mask = GLRO (dl_pagesize) - 1;
+533	  if (size + top_pad < HEAP_MIN_SIZE)
+527	{
+528	  size_t page_mask = GLRO (dl_pagesize) - 1;
+533	  if (size + top_pad < HEAP_MIN_SIZE)
+535	  else if (size + top_pad <= HEAP_MAX_SIZE)
+548	  if (aligned_heap_area)
+541	  size = (size + page_mask) & ~page_mask;
+548	  if (aligned_heap_area)
+541	  size = (size + page_mask) & ~page_mask;
+548	  if (aligned_heap_area)
+561	      p1 = (char *) MMAP (0, HEAP_MAX_SIZE << 1, PROT_NONE, MAP_NORESERVE);
+mmap () at ../ports/sysdeps/unix/sysv/linux/arm/mmap.S:26
+26		push	{ r5 }
+29		ldr	r5, [sp, #8]
+30		push	{ r4 }
+34		ldr	r4, [sp, #8]
+37		movs	ip, r5, lsl #20
+38		bne	.Linval
+39		mov	r5, r5, lsr #12
+42		DO_CALL (mmap2, 0)
+46		pop	{ r4 }
+49		pop	{ r5 }
+53		cmn	r0, $4096
+55		RETINSTR(cc, lr)
+new_heap (size=135168, size@entry=1472, top_pad=<optimized out>)
+    at arena.c:562
+562	      if (p1 != MAP_FAILED)
+561	      p1 = (char *) MMAP (0, HEAP_MAX_SIZE << 1, PROT_NONE, MAP_NORESERVE);
+562	      if (p1 != MAP_FAILED)
+564	          p2 = (char *) (((unsigned long) p1 + (HEAP_MAX_SIZE - 1))
+565	                         & ~(HEAP_MAX_SIZE - 1));
+567	          if (ul)
+570	            aligned_heap_area = p2 + HEAP_MAX_SIZE;
+571	          __munmap (p2 + HEAP_MAX_SIZE, HEAP_MAX_SIZE - ul);
+munmap () at ../sysdeps/unix/syscall-template.S:81
+81	T_PSEUDO (SYSCALL_SYMBOL, SYSCALL_NAME, SYSCALL_NARGS)
+82		ret
+new_heap (size=135168, size@entry=1472, top_pad=<optimized out>)
+    at arena.c:588
+588	  if (__mprotect (p2, size, PROT_READ | PROT_WRITE) != 0)
+mprotect () at ../sysdeps/unix/syscall-template.S:81
+81	T_PSEUDO (SYSCALL_SYMBOL, SYSCALL_NAME, SYSCALL_NARGS)
+82		ret
+new_heap (size=135168, size@entry=1472, top_pad=<optimized out>)
+    at arena.c:594
+594	  h->size = size;
+595	  h->mprotect_size = size;
+598	  return h;
+588	  if (__mprotect (p2, size, PROT_READ | PROT_WRITE) != 0)
+599	}
+_int_new_arena (size=344) at arena.c:743
+743	  if (!h)
+752	  a = h->ar_ptr = (mstate) (h + 1);
+753	  malloc_init_state (a);
+752	  a = h->ar_ptr = (mstate) (h + 1);
+753	  malloc_init_state (a);
+malloc_init_state (av=av@entry=0x76400010) at malloc.c:1780
+1780	{
+1785	  for (i = 1; i < NBINS; ++i)
+1788	      bin->fd = bin->bk = bin;
+1785	  for (i = 1; i < NBINS; ++i)
+1788	      bin->fd = bin->bk = bin;
+1785	  for (i = 1; i < NBINS; ++i)
+1788	      bin->fd = bin->bk = bin;
+1785	  for (i = 1; i < NBINS; ++i)
+1788	      bin->fd = bin->bk = bin;
+1785	  for (i = 1; i < NBINS; ++i)
+1788	      bin->fd = bin->bk = bin;
+1785	  for (i = 1; i < NBINS; ++i)
+1788	      bin->fd = bin->bk = bin;
+1785	  for (i = 1; i < NBINS; ++i)
+1788	      bin->fd = bin->bk = bin;
+1785	  for (i = 1; i < NBINS; ++i)
+1788	      bin->fd = bin->bk = bin;
+1785	  for (i = 1; i < NBINS; ++i)
+1788	      bin->fd = bin->bk = bin;
+1785	  for (i = 1; i < NBINS; ++i)
+1788	      bin->fd = bin->bk = bin;
+1785	  for (i = 1; i < NBINS; ++i)
+1788	      bin->fd = bin->bk = bin;
+1785	  for (i = 1; i < NBINS; ++i)
+1788	      bin->fd = bin->bk = bin;
+1785	  for (i = 1; i < NBINS; ++i)
+1788	      bin->fd = bin->bk = bin;
+1785	  for (i = 1; i < NBINS; ++i)
+1788	      bin->fd = bin->bk = bin;
+1785	  for (i = 1; i < NBINS; ++i)
+1788	      bin->fd = bin->bk = bin;
+1785	  for (i = 1; i < NBINS; ++i)
+1788	      bin->fd = bin->bk = bin;
+1785	  for (i = 1; i < NBINS; ++i)
+1788	      bin->fd = bin->bk = bin;
+1785	  for (i = 1; i < NBINS; ++i)
+1788	      bin->fd = bin->bk = bin;
+1785	  for (i = 1; i < NBINS; ++i)
+1788	      bin->fd = bin->bk = bin;
+1785	  for (i = 1; i < NBINS; ++i)
+1788	      bin->fd = bin->bk = bin;
+1785	  for (i = 1; i < NBINS; ++i)
+1788	      bin->fd = bin->bk = bin;
+1785	  for (i = 1; i < NBINS; ++i)
+1788	      bin->fd = bin->bk = bin;
+1785	  for (i = 1; i < NBINS; ++i)
+1788	      bin->fd = bin->bk = bin;
+1785	  for (i = 1; i < NBINS; ++i)
+1788	      bin->fd = bin->bk = bin;
+1785	  for (i = 1; i < NBINS; ++i)
+1788	      bin->fd = bin->bk = bin;
+1785	  for (i = 1; i < NBINS; ++i)
+1788	      bin->fd = bin->bk = bin;
+1785	  for (i = 1; i < NBINS; ++i)
+1788	      bin->fd = bin->bk = bin;
+1785	  for (i = 1; i < NBINS; ++i)
+1788	      bin->fd = bin->bk = bin;
+1785	  for (i = 1; i < NBINS; ++i)
+1788	      bin->fd = bin->bk = bin;
+1785	  for (i = 1; i < NBINS; ++i)
+1788	      bin->fd = bin->bk = bin;
+1785	  for (i = 1; i < NBINS; ++i)
+1788	      bin->fd = bin->bk = bin;
+1785	  for (i = 1; i < NBINS; ++i)
+1788	      bin->fd = bin->bk = bin;
+1785	  for (i = 1; i < NBINS; ++i)
+1788	      bin->fd = bin->bk = bin;
+1785	  for (i = 1; i < NBINS; ++i)
+1788	      bin->fd = bin->bk = bin;
+1785	  for (i = 1; i < NBINS; ++i)
+1788	      bin->fd = bin->bk = bin;
+1785	  for (i = 1; i < NBINS; ++i)
+1788	      bin->fd = bin->bk = bin;
+1785	  for (i = 1; i < NBINS; ++i)
+1788	      bin->fd = bin->bk = bin;
+1785	  for (i = 1; i < NBINS; ++i)
+1788	      bin->fd = bin->bk = bin;
+1785	  for (i = 1; i < NBINS; ++i)
+1788	      bin->fd = bin->bk = bin;
+1785	  for (i = 1; i < NBINS; ++i)
+1788	      bin->fd = bin->bk = bin;
+1785	  for (i = 1; i < NBINS; ++i)
+1788	      bin->fd = bin->bk = bin;
+1785	  for (i = 1; i < NBINS; ++i)
+1788	      bin->fd = bin->bk = bin;
+1785	  for (i = 1; i < NBINS; ++i)
+1788	      bin->fd = bin->bk = bin;
+1785	  for (i = 1; i < NBINS; ++i)
+1788	      bin->fd = bin->bk = bin;
+1785	  for (i = 1; i < NBINS; ++i)
+1788	      bin->fd = bin->bk = bin;
+1785	  for (i = 1; i < NBINS; ++i)
+1788	      bin->fd = bin->bk = bin;
+1785	  for (i = 1; i < NBINS; ++i)
+1788	      bin->fd = bin->bk = bin;
+1785	  for (i = 1; i < NBINS; ++i)
+1788	      bin->fd = bin->bk = bin;
+1785	  for (i = 1; i < NBINS; ++i)
+1788	      bin->fd = bin->bk = bin;
+1785	  for (i = 1; i < NBINS; ++i)
+1788	      bin->fd = bin->bk = bin;
+1785	  for (i = 1; i < NBINS; ++i)
+1788	      bin->fd = bin->bk = bin;
+1785	  for (i = 1; i < NBINS; ++i)
+1788	      bin->fd = bin->bk = bin;
+1785	  for (i = 1; i < NBINS; ++i)
+1788	      bin->fd = bin->bk = bin;
+1785	  for (i = 1; i < NBINS; ++i)
+1788	      bin->fd = bin->bk = bin;
+1785	  for (i = 1; i < NBINS; ++i)
+1788	      bin->fd = bin->bk = bin;
+1785	  for (i = 1; i < NBINS; ++i)
+1788	      bin->fd = bin->bk = bin;
+1785	  for (i = 1; i < NBINS; ++i)
+1788	      bin->fd = bin->bk = bin;
+1785	  for (i = 1; i < NBINS; ++i)
+1788	      bin->fd = bin->bk = bin;
+1785	  for (i = 1; i < NBINS; ++i)
+1788	      bin->fd = bin->bk = bin;
+1785	  for (i = 1; i < NBINS; ++i)
+1788	      bin->fd = bin->bk = bin;
+1785	  for (i = 1; i < NBINS; ++i)
+1788	      bin->fd = bin->bk = bin;
+1785	  for (i = 1; i < NBINS; ++i)
+1788	      bin->fd = bin->bk = bin;
+1785	  for (i = 1; i < NBINS; ++i)
+1788	      bin->fd = bin->bk = bin;
+1785	  for (i = 1; i < NBINS; ++i)
+1788	      bin->fd = bin->bk = bin;
+1785	  for (i = 1; i < NBINS; ++i)
+1788	      bin->fd = bin->bk = bin;
+1785	  for (i = 1; i < NBINS; ++i)
+1788	      bin->fd = bin->bk = bin;
+1785	  for (i = 1; i < NBINS; ++i)
+1788	      bin->fd = bin->bk = bin;
+1785	  for (i = 1; i < NBINS; ++i)
+1788	      bin->fd = bin->bk = bin;
+1785	  for (i = 1; i < NBINS; ++i)
+1788	      bin->fd = bin->bk = bin;
+1785	  for (i = 1; i < NBINS; ++i)
+1788	      bin->fd = bin->bk = bin;
+1785	  for (i = 1; i < NBINS; ++i)
+1788	      bin->fd = bin->bk = bin;
+1785	  for (i = 1; i < NBINS; ++i)
+1788	      bin->fd = bin->bk = bin;
+1785	  for (i = 1; i < NBINS; ++i)
+1788	      bin->fd = bin->bk = bin;
+1785	  for (i = 1; i < NBINS; ++i)
+1788	      bin->fd = bin->bk = bin;
+1785	  for (i = 1; i < NBINS; ++i)
+1788	      bin->fd = bin->bk = bin;
+1785	  for (i = 1; i < NBINS; ++i)
+1788	      bin->fd = bin->bk = bin;
+1785	  for (i = 1; i < NBINS; ++i)
+1788	      bin->fd = bin->bk = bin;
+1785	  for (i = 1; i < NBINS; ++i)
+1788	      bin->fd = bin->bk = bin;
+1785	  for (i = 1; i < NBINS; ++i)
+1788	      bin->fd = bin->bk = bin;
+1785	  for (i = 1; i < NBINS; ++i)
+1788	      bin->fd = bin->bk = bin;
+1785	  for (i = 1; i < NBINS; ++i)
+1788	      bin->fd = bin->bk = bin;
+1785	  for (i = 1; i < NBINS; ++i)
+1788	      bin->fd = bin->bk = bin;
+1785	  for (i = 1; i < NBINS; ++i)
+1788	      bin->fd = bin->bk = bin;
+1785	  for (i = 1; i < NBINS; ++i)
+1788	      bin->fd = bin->bk = bin;
+1785	  for (i = 1; i < NBINS; ++i)
+1788	      bin->fd = bin->bk = bin;
+1785	  for (i = 1; i < NBINS; ++i)
+1788	      bin->fd = bin->bk = bin;
+1785	  for (i = 1; i < NBINS; ++i)
+1788	      bin->fd = bin->bk = bin;
+1785	  for (i = 1; i < NBINS; ++i)
+1788	      bin->fd = bin->bk = bin;
+1785	  for (i = 1; i < NBINS; ++i)
+1788	      bin->fd = bin->bk = bin;
+1785	  for (i = 1; i < NBINS; ++i)
+1788	      bin->fd = bin->bk = bin;
+1785	  for (i = 1; i < NBINS; ++i)
+1788	      bin->fd = bin->bk = bin;
+1785	  for (i = 1; i < NBINS; ++i)
+1788	      bin->fd = bin->bk = bin;
+1785	  for (i = 1; i < NBINS; ++i)
+1788	      bin->fd = bin->bk = bin;
+1785	  for (i = 1; i < NBINS; ++i)
+1788	      bin->fd = bin->bk = bin;
+1785	  for (i = 1; i < NBINS; ++i)
+1788	      bin->fd = bin->bk = bin;
+1785	  for (i = 1; i < NBINS; ++i)
+1788	      bin->fd = bin->bk = bin;
+1785	  for (i = 1; i < NBINS; ++i)
+1788	      bin->fd = bin->bk = bin;
+1785	  for (i = 1; i < NBINS; ++i)
+1788	      bin->fd = bin->bk = bin;
+1785	  for (i = 1; i < NBINS; ++i)
+1788	      bin->fd = bin->bk = bin;
+1785	  for (i = 1; i < NBINS; ++i)
+1788	      bin->fd = bin->bk = bin;
+1785	  for (i = 1; i < NBINS; ++i)
+1788	      bin->fd = bin->bk = bin;
+1785	  for (i = 1; i < NBINS; ++i)
+1788	      bin->fd = bin->bk = bin;
+1785	  for (i = 1; i < NBINS; ++i)
+1788	      bin->fd = bin->bk = bin;
+1785	  for (i = 1; i < NBINS; ++i)
+1788	      bin->fd = bin->bk = bin;
+1785	  for (i = 1; i < NBINS; ++i)
+1788	      bin->fd = bin->bk = bin;
+1785	  for (i = 1; i < NBINS; ++i)
+1788	      bin->fd = bin->bk = bin;
+1785	  for (i = 1; i < NBINS; ++i)
+1788	      bin->fd = bin->bk = bin;
+1785	  for (i = 1; i < NBINS; ++i)
+1788	      bin->fd = bin->bk = bin;
+1785	  for (i = 1; i < NBINS; ++i)
+1788	      bin->fd = bin->bk = bin;
+1785	  for (i = 1; i < NBINS; ++i)
+1788	      bin->fd = bin->bk = bin;
+1785	  for (i = 1; i < NBINS; ++i)
+1788	      bin->fd = bin->bk = bin;
+1785	  for (i = 1; i < NBINS; ++i)
+1788	      bin->fd = bin->bk = bin;
+1785	  for (i = 1; i < NBINS; ++i)
+1788	      bin->fd = bin->bk = bin;
+1785	  for (i = 1; i < NBINS; ++i)
+1788	      bin->fd = bin->bk = bin;
+1785	  for (i = 1; i < NBINS; ++i)
+1788	      bin->fd = bin->bk = bin;
+1785	  for (i = 1; i < NBINS; ++i)
+1788	      bin->fd = bin->bk = bin;
+1785	  for (i = 1; i < NBINS; ++i)
+1788	      bin->fd = bin->bk = bin;
+1785	  for (i = 1; i < NBINS; ++i)
+1788	      bin->fd = bin->bk = bin;
+1785	  for (i = 1; i < NBINS; ++i)
+1788	      bin->fd = bin->bk = bin;
+1785	  for (i = 1; i < NBINS; ++i)
+1788	      bin->fd = bin->bk = bin;
+1785	  for (i = 1; i < NBINS; ++i)
+1788	      bin->fd = bin->bk = bin;
+1785	  for (i = 1; i < NBINS; ++i)
+1788	      bin->fd = bin->bk = bin;
+1785	  for (i = 1; i < NBINS; ++i)
+1788	      bin->fd = bin->bk = bin;
+1785	  for (i = 1; i < NBINS; ++i)
+1788	      bin->fd = bin->bk = bin;
+1785	  for (i = 1; i < NBINS; ++i)
+1788	      bin->fd = bin->bk = bin;
+1785	  for (i = 1; i < NBINS; ++i)
+1788	      bin->fd = bin->bk = bin;
+1785	  for (i = 1; i < NBINS; ++i)
+1788	      bin->fd = bin->bk = bin;
+1785	  for (i = 1; i < NBINS; ++i)
+1792	  if (av != &main_arena)
+1794	  set_noncontiguous (av);
+1797	  av->flags |= FASTCHUNKS_BIT;
+1799	  av->top = initial_top (av);
+_int_new_arena (size=1983905808) at arena.c:756
+756	  arena_mem += h->size;
+755	  a->system_mem = a->max_system_mem = h->size;
+756	  arena_mem += h->size;
+759	  ptr = (char *) (a + 1);
+756	  arena_mem += h->size;
+761	  if (misalign > 0)
+756	  arena_mem += h->size;
+762	    ptr += MALLOC_ALIGNMENT - misalign;
+755	  a->system_mem = a->max_system_mem = h->size;
+764	  set_head (top (a), (((char *) h + h->size) - ptr) | PREV_INUSE);
+767	  tsd_setspecific (arena_key, (void *) a);
+764	  set_head (top (a), (((char *) h + h->size) - ptr) | PREV_INUSE);
+763	  top (a) = (mchunkptr) ptr;
+767	  tsd_setspecific (arena_key, (void *) a);
+__aeabi_read_tp ()
+    at ../ports/sysdeps/unix/sysv/linux/arm/aeabi_read_tp.S:52
+52		mov	r0, #0xffff0fff
+53		sub	pc, r0, #31
+_int_new_arena (size=1983905808) at arena.c:764
+764	  set_head (top (a), (((char *) h + h->size) - ptr) | PREV_INUSE);
+752	  a = h->ar_ptr = (mstate) (h + 1);
+767	  tsd_setspecific (arena_key, (void *) a);
+769	  (void) mutex_lock (&a->mutex);
+768	  mutex_init (&a->mutex);
+767	  tsd_setspecific (arena_key, (void *) a);
+769	  (void) mutex_lock (&a->mutex);
+771	  (void) mutex_lock (&list_lock);
+774	  a->next = main_arena.next;
+778	  (void) mutex_unlock (&list_lock);
+774	  a->next = main_arena.next;
+778	  (void) mutex_unlock (&list_lock);
+774	  a->next = main_arena.next;
+778	  (void) mutex_unlock (&list_lock);
+774	  a->next = main_arena.next;
+775	  atomic_write_barrier ();
+778	  (void) mutex_unlock (&list_lock);
+776	  main_arena.next = a;
+778	  (void) mutex_unlock (&list_lock);
+arena_get2 (size=size@entry=344, avoid_arena=avoid_arena@entry=0x0, 
+    a_tsd=<optimized out>) at arena.c:891
+891	          if (__builtin_expect (a == NULL, 0))
+898	}
+__libc_calloc (n=<optimized out>, elem_size=<optimized out>)
+    at malloc.c:3198
+3198	  if (!av)
+3204	  oldtop = top (av);
+3212	  if (av != &main_arena)
+3205	  oldtopsize = chunksize (top (av));
+3212	  if (av != &main_arena)
+3205	  oldtopsize = chunksize (top (av));
+3212	  if (av != &main_arena)
+3214	      heap_info *heap = heap_for_ptr (oldtop);
+3215	      if (oldtopsize < (char *) heap + heap->mprotect_size - (char *) oldtop)
+3219	  mem = _int_malloc (av, sz);
+_int_malloc (av=av@entry=0x76400010, bytes=bytes@entry=344)
+    at malloc.c:3302
+3302	{
+3332	  checked_request2size (bytes, nb);
+3302	{
+3332	  checked_request2size (bytes, nb);
+3340	  if ((unsigned long) (nb) <= (unsigned long) (get_max_fast ()))
+3332	  checked_request2size (bytes, nb);
+3340	  if ((unsigned long) (nb) <= (unsigned long) (get_max_fast ()))
+3332	  checked_request2size (bytes, nb);
+3340	  if ((unsigned long) (nb) <= (unsigned long) (get_max_fast ()))
+3332	  checked_request2size (bytes, nb);
+3340	  if ((unsigned long) (nb) <= (unsigned long) (get_max_fast ()))
+3377	  if (in_smallbin_range (nb))
+3380	      bin = bin_at (av, idx);
+3379	      idx = smallbin_index (nb);
+3380	      bin = bin_at (av, idx);
+3382	      if ((victim = last (bin)) != bin)
+3792	            idx = largebin_index (nb);
+3447	            malloc_printerr (check_action, "malloc(): memory corruption",
+3459	          if (in_smallbin_range (nb) &&
+3792	            idx = largebin_index (nb);
+3447	            malloc_printerr (check_action, "malloc(): memory corruption",
+3462	              (unsigned long) (size) > (unsigned long) (nb + MINSIZE))
+3792	            idx = largebin_index (nb);
+3447	            malloc_printerr (check_action, "malloc(): memory corruption",
+3462	              (unsigned long) (size) > (unsigned long) (nb + MINSIZE))
+3442	      while ((victim = unsorted_chunks (av)->bk) != unsorted_chunks (av))
+3576	      if (!in_smallbin_range (nb))
+3649	      ++idx;
+3653	      bit = idx2bit (idx);
+3649	      ++idx;
+3653	      bit = idx2bit (idx);
+3651	      block = idx2block (idx);
+3652	      map = av->binmap[block];
+3650	      bin = bin_at (av, idx);
+3653	      bit = idx2bit (idx);
+3652	      map = av->binmap[block];
+3650	      bin = bin_at (av, idx);
+3658	          if (bit > map || bit == 0)
+3662	                  if (++block >= BINMAPSIZE) /* out of bins */
+3665	              while ((map = av->binmap[block]) == 0);
+3662	                  if (++block >= BINMAPSIZE) /* out of bins */
+3665	              while ((map = av->binmap[block]) == 0);
+3662	                  if (++block >= BINMAPSIZE) /* out of bins */
+3765	      victim = av->top;
+3768	      if ((unsigned long) (size) >= (unsigned long) (nb + MINSIZE))
+3766	      size = chunksize (victim);
+3768	      if ((unsigned long) (size) >= (unsigned long) (nb + MINSIZE))
+3779	          alloc_perturb (p, bytes);
+alloc_perturb (n=<optimized out>, p=<optimized out>)
+    at malloc.c:1862
+1862	  if (__glibc_unlikely (perturb_byte))
+_int_malloc (av=av@entry=0x76400010, bytes=bytes@entry=344)
+    at malloc.c:3773
+3773	          set_head (victim, nb | PREV_INUSE |
+3779	          alloc_perturb (p, bytes);
+alloc_perturb (n=<optimized out>, p=<optimized out>)
+    at malloc.c:1862
+1862	  if (__glibc_unlikely (perturb_byte))
+_int_malloc (av=av@entry=0x76400010, bytes=bytes@entry=344)
+    at malloc.c:3773
+3773	          set_head (victim, nb | PREV_INUSE |
+3779	          alloc_perturb (p, bytes);
+alloc_perturb (n=<optimized out>, p=<optimized out>)
+    at malloc.c:1862
+1862	  if (__glibc_unlikely (perturb_byte))
+_int_malloc (av=av@entry=0x76400010, bytes=bytes@entry=344)
+    at malloc.c:3770
+3770	          remainder_size = size - nb;
+3773	          set_head (victim, nb | PREV_INUSE |
+3771	          remainder = chunk_at_offset (victim, nb);
+3775	          set_head (remainder, remainder_size | PREV_INUSE);
+3773	          set_head (victim, nb | PREV_INUSE |
+3779	          alloc_perturb (p, bytes);
+alloc_perturb (n=<optimized out>, p=<optimized out>)
+    at malloc.c:1862
+1862	  if (__glibc_unlikely (perturb_byte))
+_int_malloc (av=av@entry=0x76400010, bytes=bytes@entry=344)
+    at malloc.c:3772
+3772	          av->top = remainder;
+3778	          void *p = chunk2mem (victim);
+3773	          set_head (victim, nb | PREV_INUSE |
+3775	          set_head (remainder, remainder_size | PREV_INUSE);
+3779	          alloc_perturb (p, bytes);
+alloc_perturb (n=344, p=0x76400468 "") at malloc.c:1862
+1862	  if (__glibc_unlikely (perturb_byte))
+_int_malloc (av=av@entry=0x76400010, bytes=bytes@entry=344)
+    at malloc.c:3806
+3806	}
+__libc_calloc (n=<optimized out>, elem_size=<optimized out>)
+    at malloc.c:3222
+3222	  assert (!mem || chunk_is_mmapped (mem2chunk (mem)) ||
+3238	    (void) mutex_unlock (&av->mutex);
+3242	  if (chunk_is_mmapped (p))
+3253	  if (perturb_byte == 0 && (p == oldtop && csz > oldtopsize))
+3250	  csz = chunksize (p);
+3253	  if (perturb_byte == 0 && (p == oldtop && csz > oldtopsize))
+3239	  p = mem2chunk (mem);
+3253	  if (perturb_byte == 0 && (p == oldtop && csz > oldtopsize))
+3264	  clearsize = csz - SIZE_SZ;
+3265	  nclears = clearsize / sizeof (INTERNAL_SIZE_T);
+3266	  assert (nclears >= 3);
+3268	  if (nclears > 9)
+3269	    return memset (d, 0, clearsize);
+memset () at ../ports/sysdeps/arm/memset.S:29
+29		mov	r3, r0
+30		cmp	r2, #8
+31		bcc	2f		@ less than 8 bytes to move
+34		tst	r3, #3		@ aligned yet?
+35		sfi_breg r3, \
+37		subne	r2, r2, #1
+38		bne	1b
+40		and	r1, r1, #255	@ clear any sign bits
+41		orr	r1, r1, r1, lsl $8
+42		orr	r1, r1, r1, lsl $16
+43		mov	ip, r1
+46		subs	r2, r2, #8
+47		sfi_breg r3, \
+49		subscs	r2, r2, #8
+50		sfi_breg r3, \
+52		subscs	r2, r2, #8
+53		sfi_breg r3, \
+55		subscs	r2, r2, #8
+56		sfi_breg r3, \
+58		bcs	1b
+46		subs	r2, r2, #8
+47		sfi_breg r3, \
+49		subscs	r2, r2, #8
+50		sfi_breg r3, \
+52		subscs	r2, r2, #8
+53		sfi_breg r3, \
+55		subscs	r2, r2, #8
+56		sfi_breg r3, \
+58		bcs	1b
+46		subs	r2, r2, #8
+47		sfi_breg r3, \
+49		subscs	r2, r2, #8
+50		sfi_breg r3, \
+52		subscs	r2, r2, #8
+53		sfi_breg r3, \
+55		subscs	r2, r2, #8
+56		sfi_breg r3, \
+58		bcs	1b
+46		subs	r2, r2, #8
+47		sfi_breg r3, \
+49		subscs	r2, r2, #8
+50		sfi_breg r3, \
+52		subscs	r2, r2, #8
+53		sfi_breg r3, \
+55		subscs	r2, r2, #8
+56		sfi_breg r3, \
+58		bcs	1b
+46		subs	r2, r2, #8
+47		sfi_breg r3, \
+49		subscs	r2, r2, #8
+50		sfi_breg r3, \
+52		subscs	r2, r2, #8
+53		sfi_breg r3, \
+55		subscs	r2, r2, #8
+56		sfi_breg r3, \
+58		bcs	1b
+46		subs	r2, r2, #8
+47		sfi_breg r3, \
+49		subscs	r2, r2, #8
+50		sfi_breg r3, \
+52		subscs	r2, r2, #8
+53		sfi_breg r3, \
+55		subscs	r2, r2, #8
+56		sfi_breg r3, \
+58		bcs	1b
+46		subs	r2, r2, #8
+47		sfi_breg r3, \
+49		subscs	r2, r2, #8
+50		sfi_breg r3, \
+52		subscs	r2, r2, #8
+53		sfi_breg r3, \
+55		subscs	r2, r2, #8
+56		sfi_breg r3, \
+58		bcs	1b
+46		subs	r2, r2, #8
+47		sfi_breg r3, \
+49		subscs	r2, r2, #8
+50		sfi_breg r3, \
+52		subscs	r2, r2, #8
+53		sfi_breg r3, \
+55		subscs	r2, r2, #8
+56		sfi_breg r3, \
+58		bcs	1b
+46		subs	r2, r2, #8
+47		sfi_breg r3, \
+49		subscs	r2, r2, #8
+50		sfi_breg r3, \
+52		subscs	r2, r2, #8
+53		sfi_breg r3, \
+55		subscs	r2, r2, #8
+56		sfi_breg r3, \
+58		bcs	1b
+46		subs	r2, r2, #8
+47		sfi_breg r3, \
+49		subscs	r2, r2, #8
+50		sfi_breg r3, \
+52		subscs	r2, r2, #8
+53		sfi_breg r3, \
+55		subscs	r2, r2, #8
+56		sfi_breg r3, \
+58		bcs	1b
+46		subs	r2, r2, #8
+47		sfi_breg r3, \
+49		subscs	r2, r2, #8
+50		sfi_breg r3, \
+52		subscs	r2, r2, #8
+53		sfi_breg r3, \
+55		subscs	r2, r2, #8
+56		sfi_breg r3, \
+58		bcs	1b
+60		and	r2, r2, #7
+62		subs	r2, r2, #1	@ store up to 4 bytes per loop iteration
+63		sfi_breg r3, \
+65		subscs	r2, r2, #1
+66		sfi_breg r3, \
+68		subscs	r2, r2, #1
+69		sfi_breg r3, \
+71		subscs	r2, r2, #1
+72		sfi_breg r3, \
+74		bcs	2b
+62		subs	r2, r2, #1	@ store up to 4 bytes per loop iteration
+63		sfi_breg r3, \
+65		subscs	r2, r2, #1
+66		sfi_breg r3, \
+68		subscs	r2, r2, #1
+69		sfi_breg r3, \
+71		subscs	r2, r2, #1
+72		sfi_breg r3, \
+74		bcs	2b
+76		DO_RET(lr)
+__libc_calloc (n=<optimized out>, elem_size=<optimized out>)
+    at malloc.c:3294
+3294	}
+libusb_init (context=0x76ec77f4 <gLJContext>) at core.c:2144
+2144		if (!ctx) {
+2150		ctx->debug = get_env_debug_level();
+get_env_debug_level () at core.c:2096
+2096		const char *dbg = getenv("LIBUSB_DEBUG");
+2095	{
+2096		const char *dbg = getenv("LIBUSB_DEBUG");
+__GI_getenv (name=0x76e9ea04 "LIBUSB_DEBUG") at getenv.c:35
+35	getenv.c: No such file or directory.
+36	in getenv.c
+strlen () at ../ports/sysdeps/arm/armv6/strlen.S:26
+26		sfi_breg r0, \
+35		and	r3, r0, #7
+36		mov	r1, r0			@ Save the input pointer
+37		rsb	r3, r3, #15		@ 16 - 1 peeled loop iteration
+38		cmp	r2, #0
+39		beq	99f
+42	1:	sfi_breg r0, \
+44		subs	r3, r3, #1		@ ... the aligment point
+46		cmpne	r2, #0			@ ... or EOS
+47		bne	1b
+42	1:	sfi_breg r0, \
+44		subs	r3, r3, #1		@ ... the aligment point
+46		cmpne	r2, #0			@ ... or EOS
+47		bne	1b
+42	1:	sfi_breg r0, \
+44		subs	r3, r3, #1		@ ... the aligment point
+46		cmpne	r2, #0			@ ... or EOS
+47		bne	1b
+42	1:	sfi_breg r0, \
+44		subs	r3, r3, #1		@ ... the aligment point
+46		cmpne	r2, #0			@ ... or EOS
+47		bne	1b
+42	1:	sfi_breg r0, \
+44		subs	r3, r3, #1		@ ... the aligment point
+46		cmpne	r2, #0			@ ... or EOS
+47		bne	1b
+42	1:	sfi_breg r0, \
+44		subs	r3, r3, #1		@ ... the aligment point
+46		cmpne	r2, #0			@ ... or EOS
+47		bne	1b
+42	1:	sfi_breg r0, \
+44		subs	r3, r3, #1		@ ... the aligment point
+46		cmpne	r2, #0			@ ... or EOS
+47		bne	1b
+42	1:	sfi_breg r0, \
+44		subs	r3, r3, #1		@ ... the aligment point
+46		cmpne	r2, #0			@ ... or EOS
+47		bne	1b
+42	1:	sfi_breg r0, \
+44		subs	r3, r3, #1		@ ... the aligment point
+46		cmpne	r2, #0			@ ... or EOS
+47		bne	1b
+42	1:	sfi_breg r0, \
+44		subs	r3, r3, #1		@ ... the aligment point
+46		cmpne	r2, #0			@ ... or EOS
+47		bne	1b
+42	1:	sfi_breg r0, \
+44		subs	r3, r3, #1		@ ... the aligment point
+46		cmpne	r2, #0			@ ... or EOS
+47		bne	1b
+50		cmp	r2, #0			@ Found EOS
+51		beq	99f
+52		add	r0, r0, #1
+55		sfi_breg r0, \
+62		ldr	ip, =0x01010101
+63		sfi_pld	r0, #64
+71	2:	uqsub8	r2, ip, r2		@ Find EOS
+72		uqsub8	r3, ip, r3
+73		sfi_pld	r0, #128		@ Prefetch 2 lines ahead
+74		orrs	r3, r3, r2		@ Combine the two words
+76		sfi_breg r0, \
+78		beq	2b
+83		cmp	r2, #0
+84		sub	r0, r0, #4
+86		moveq	r2, r3
+87		subne	r0, r0, #4
+93		rev	r2, r2			@ For LE, count from the little end
+95		clz	r2, r2
+96		add	r0, r0, r2, lsr #3	@ Adjust the pointer to the found byte
+98		sub	r0, r0, r1		@ Subtract input to compute length
+99		bx	lr
+__GI_getenv (name=0x76e9ea04 "LIBUSB_DEBUG") at getenv.c:35
+35	getenv.c: No such file or directory.
+40	in getenv.c
+35	in getenv.c
+40	in getenv.c
+36	in getenv.c
+40	in getenv.c
+43	in getenv.c
+53	in getenv.c
+43	in getenv.c
+76	in getenv.c
+70	in getenv.c
+74	in getenv.c
+73	in getenv.c
+76	in getenv.c
+82	in getenv.c
+81	in getenv.c
+Source directories searched: /usr/src/glibc/glibc-2.19/stdlib:/usr/src/glibc/glibc-2.19/elf:/usr/src/glibc/glibc-2.19/malloc:/usr/src/glibc/glibc-2.19/nptl:$cdir:$cwd
+85		  if (name_start == ep_start && !strncmp (*ep + 2, name, len)
+82				       | (((unsigned char *) *ep)[1] << 8));
+81		  uint16_t ep_start = (((unsigned char *) *ep)[0]
+85		  if (name_start == ep_start && !strncmp (*ep + 2, name, len)
+82				       | (((unsigned char *) *ep)[1] << 8));
+81		  uint16_t ep_start = (((unsigned char *) *ep)[0]
+85		  if (name_start == ep_start && !strncmp (*ep + 2, name, len)
+82				       | (((unsigned char *) *ep)[1] << 8));
+81		  uint16_t ep_start = (((unsigned char *) *ep)[0]
+85		  if (name_start == ep_start && !strncmp (*ep + 2, name, len)
+82				       | (((unsigned char *) *ep)[1] << 8));
+81		  uint16_t ep_start = (((unsigned char *) *ep)[0]
+85		  if (name_start == ep_start && !strncmp (*ep + 2, name, len)
+82				       | (((unsigned char *) *ep)[1] << 8));
+81		  uint16_t ep_start = (((unsigned char *) *ep)[0]
+85		  if (name_start == ep_start && !strncmp (*ep + 2, name, len)
+82				       | (((unsigned char *) *ep)[1] << 8));
+81		  uint16_t ep_start = (((unsigned char *) *ep)[0]
+85		  if (name_start == ep_start && !strncmp (*ep + 2, name, len)
+82				       | (((unsigned char *) *ep)[1] << 8));
+81		  uint16_t ep_start = (((unsigned char *) *ep)[0]
+85		  if (name_start == ep_start && !strncmp (*ep + 2, name, len)
+82				       | (((unsigned char *) *ep)[1] << 8));
+81		  uint16_t ep_start = (((unsigned char *) *ep)[0]
+85		  if (name_start == ep_start && !strncmp (*ep + 2, name, len)
+82				       | (((unsigned char *) *ep)[1] << 8));
+81		  uint16_t ep_start = (((unsigned char *) *ep)[0]
+85		  if (name_start == ep_start && !strncmp (*ep + 2, name, len)
+82				       | (((unsigned char *) *ep)[1] << 8));
+81		  uint16_t ep_start = (((unsigned char *) *ep)[0]
+85		  if (name_start == ep_start && !strncmp (*ep + 2, name, len)
+82				       | (((unsigned char *) *ep)[1] << 8));
+81		  uint16_t ep_start = (((unsigned char *) *ep)[0]
+85		  if (name_start == ep_start && !strncmp (*ep + 2, name, len)
+82				       | (((unsigned char *) *ep)[1] << 8));
+81		  uint16_t ep_start = (((unsigned char *) *ep)[0]
+85		  if (name_start == ep_start && !strncmp (*ep + 2, name, len)
+82				       | (((unsigned char *) *ep)[1] << 8));
+81		  uint16_t ep_start = (((unsigned char *) *ep)[0]
+85		  if (name_start == ep_start && !strncmp (*ep + 2, name, len)
+__GI_strncmp (s1=s1@entry=0x7effff81 "NES=52", 
+    s2=s2@entry=0x76e9ea06 "BUSB_DEBUG", n=n@entry=10)
+    at strncmp.c:37
+37	strncmp.c: No such file or directory.
+33	in strncmp.c
+37	in strncmp.c
+39	in strncmp.c
+Source directories searched: /usr/src/glibc/glibc-2.19/string:/usr/src/glibc/glibc-2.19/stdlib:/usr/src/glibc/glibc-2.19/elf:/usr/src/glibc/glibc-2.19/malloc:/usr/src/glibc/glibc-2.19/nptl:$cdir:$cwd
+42		  c1 = (unsigned char) *s1++;
+43		  c2 = (unsigned char) *s2++;
+44		  if (c1 == '\0' || c1 != c2)
+71	  return c1 - c2;
+72	}
+__GI_getenv (name=0x76e9ea06 "BUSB_DEBUG") at getenv.c:82
+82				       | (((unsigned char *) *ep)[1] << 8));
+81		  uint16_t ep_start = (((unsigned char *) *ep)[0]
+85		  if (name_start == ep_start && !strncmp (*ep + 2, name, len)
+82				       | (((unsigned char *) *ep)[1] << 8));
+81		  uint16_t ep_start = (((unsigned char *) *ep)[0]
+85		  if (name_start == ep_start && !strncmp (*ep + 2, name, len)
+82				       | (((unsigned char *) *ep)[1] << 8));
+81		  uint16_t ep_start = (((unsigned char *) *ep)[0]
+85		  if (name_start == ep_start && !strncmp (*ep + 2, name, len)
+82				       | (((unsigned char *) *ep)[1] << 8));
+81		  uint16_t ep_start = (((unsigned char *) *ep)[0]
+85		  if (name_start == ep_start && !strncmp (*ep + 2, name, len)
+82				       | (((unsigned char *) *ep)[1] << 8));
+81		  uint16_t ep_start = (((unsigned char *) *ep)[0]
+85		  if (name_start == ep_start && !strncmp (*ep + 2, name, len)
+92	}
+get_env_debug_level () at core.c:2098
+2098		if (dbg) {
+2103			level = LIBUSB_LOG_LEVEL_NONE;
+2106	}
+libusb_init (context=0x76ec77f4 <gLJContext>) at core.c:2156
+2156		if (!usbi_default_context) {
+2151		if (ctx->debug != LIBUSB_LOG_LEVEL_NONE)
+2150		ctx->debug = get_env_debug_level();
+2156		if (!usbi_default_context) {
+2152			ctx->debug_fixed = 1;
+2156		if (!usbi_default_context) {
+2159			usbi_dbg("created default context");
+2158			default_context_refcnt++;
+2159			usbi_dbg("created default context");
+2158			default_context_refcnt++;
+2159			usbi_dbg("created default context");
+2157			usbi_default_context = ctx;
+2158			default_context_refcnt++;
+2159			usbi_dbg("created default context");
+usbi_log (ctx=0x0, level=level@entry=LIBUSB_LOG_LEVEL_DEBUG, 
+    function=0x76e9e9ec <__FUNCTION__.8431> "libusb_init", 
+    format=0x76e9eeac "created default context") at core.c:2507
+2507		va_start (args, format);
+2508		usbi_log_v(ctx, level, function, format, args);
+2507		va_start (args, format);
+2508		usbi_log_v(ctx, level, function, format, args);
+usbi_log_v (ctx=0x0, level=level@entry=LIBUSB_LOG_LEVEL_DEBUG, 
+    function=0x76e9e9ec <__FUNCTION__.8431> "libusb_init", 
+    format=0x76e9eeac "created default context", 
+    format@entry=0x6c074 <OS_task_table+708> "`ԖvSI", args=..., 
+    args@entry=...) at core.c:2419
+2419		USBI_GET_CONTEXT(ctx);
+2406	{
+2419		USBI_GET_CONTEXT(ctx);
+2420		if (ctx)
+2421			ctx_level = ctx->debug;
+2425		if (ctx_level == LIBUSB_LOG_LEVEL_NONE)
+2500	}
+usbi_log (ctx=<optimized out>, 
+    level=level@entry=LIBUSB_LOG_LEVEL_DEBUG, 
+    function=<optimized out>, 
+    format=0x76e9eeac "created default context") at core.c:2510
+2510	}
+libusb_init (context=0x76ec77f4 <gLJContext>) at core.c:2162
+2162		usbi_dbg("libusb v%u.%u.%u.%u%s", libusb_version_internal.major, libusb_version_internal.minor,
+2165		usbi_mutex_init(&ctx->usb_devs_lock);
+2162		usbi_dbg("libusb v%u.%u.%u.%u%s", libusb_version_internal.major, libusb_version_internal.minor,
+usbi_log (ctx=ctx@entry=0x0, 
+    level=level@entry=LIBUSB_LOG_LEVEL_DEBUG, 
+    function=0x76e9e9ec <__FUNCTION__.8431> "libusb_init", 
+    format=0x76e9eec4 "libusb v%u.%u.%u.%u%s") at core.c:2507
+2507		va_start (args, format);
+2508		usbi_log_v(ctx, level, function, format, args);
+2507		va_start (args, format);
+2508		usbi_log_v(ctx, level, function, format, args);
+usbi_log_v (ctx=ctx@entry=0x0, 
+    level=level@entry=LIBUSB_LOG_LEVEL_DEBUG, 
+    function=0x76e9e9ec <__FUNCTION__.8431> "libusb_init", 
+    format=0x76e9eec4 "libusb v%u.%u.%u.%u%s", 
+    format@entry=0x6c074 <OS_task_table+708> "`ԖvSI", args=..., 
+    args@entry=...) at core.c:2419
+2419		USBI_GET_CONTEXT(ctx);
+2406	{
+2419		USBI_GET_CONTEXT(ctx);
+2420		if (ctx)
+2421			ctx_level = ctx->debug;
+2425		if (ctx_level == LIBUSB_LOG_LEVEL_NONE)
+2500	}
+usbi_log (ctx=ctx@entry=0x0, 
+    level=level@entry=LIBUSB_LOG_LEVEL_DEBUG, 
+    function=<optimized out>, 
+    format=0x76e9eec4 "libusb v%u.%u.%u.%u%s") at core.c:2510
+2510	}
+libusb_init (context=0x76ec77f4 <gLJContext>) at core.c:2166
+2166		usbi_mutex_init(&ctx->open_devs_lock);
+2165		usbi_mutex_init(&ctx->usb_devs_lock);
+__GI___pthread_mutex_init (mutex=mutex@entry=0x76400480, 
+    mutexattr=mutexattr@entry=0x0) at pthread_mutex_init.c:49
+49			?: &default_mutexattr);
+43	{
+49			?: &default_mutexattr);
+52	  switch (__builtin_expect (imutexattr->mutexkind
+84	  memset (mutex, '\0', __SIZEOF_PTHREAD_MUTEX_T);
+87	  mutex->__data.__kind = imutexattr->mutexkind & ~PTHREAD_MUTEXATTR_FLAG_BITS;
+89	  if ((imutexattr->mutexkind & PTHREAD_MUTEXATTR_FLAG_ROBUST) != 0)
+97	      mutex->__data.__kind |= PTHREAD_MUTEX_ROBUST_NORMAL_NP;
+100	  switch (imutexattr->mutexkind & PTHREAD_MUTEXATTR_PROTOCOL_MASK)
+128	  if ((imutexattr->mutexkind & (PTHREAD_MUTEXATTR_FLAG_PSHARED
+141	  return 0;
+130	    mutex->__data.__kind |= PTHREAD_MUTEX_PSHARED_BIT;
+libusb_init (context=0x76ec77f4 <gLJContext>) at core.c:2167
+2167		usbi_mutex_init(&ctx->hotplug_cbs_lock);
+2166		usbi_mutex_init(&ctx->open_devs_lock);
+__GI___pthread_mutex_init (mutex=mutex@entry=0x764004a0, 
+    mutexattr=mutexattr@entry=0x0) at pthread_mutex_init.c:49
+49			?: &default_mutexattr);
+43	{
+49			?: &default_mutexattr);
+52	  switch (__builtin_expect (imutexattr->mutexkind
+84	  memset (mutex, '\0', __SIZEOF_PTHREAD_MUTEX_T);
+87	  mutex->__data.__kind = imutexattr->mutexkind & ~PTHREAD_MUTEXATTR_FLAG_BITS;
+89	  if ((imutexattr->mutexkind & PTHREAD_MUTEXATTR_FLAG_ROBUST) != 0)
+97	      mutex->__data.__kind |= PTHREAD_MUTEX_ROBUST_NORMAL_NP;
+100	  switch (imutexattr->mutexkind & PTHREAD_MUTEXATTR_PROTOCOL_MASK)
+128	  if ((imutexattr->mutexkind & (PTHREAD_MUTEXATTR_FLAG_PSHARED
+141	  return 0;
+130	    mutex->__data.__kind |= PTHREAD_MUTEX_PSHARED_BIT;
+libusb_init (context=0x76ec77f4 <gLJContext>) at core.c:2167
+2167		usbi_mutex_init(&ctx->hotplug_cbs_lock);
+__GI___pthread_mutex_init (mutex=mutex@entry=0x764004c0, 
+    mutexattr=mutexattr@entry=0x0) at pthread_mutex_init.c:49
+49			?: &default_mutexattr);
+43	{
+49			?: &default_mutexattr);
+52	  switch (__builtin_expect (imutexattr->mutexkind
+84	  memset (mutex, '\0', __SIZEOF_PTHREAD_MUTEX_T);
+87	  mutex->__data.__kind = imutexattr->mutexkind & ~PTHREAD_MUTEXATTR_FLAG_BITS;
+89	  if ((imutexattr->mutexkind & PTHREAD_MUTEXATTR_FLAG_ROBUST) != 0)
+97	      mutex->__data.__kind |= PTHREAD_MUTEX_ROBUST_NORMAL_NP;
+100	  switch (imutexattr->mutexkind & PTHREAD_MUTEXATTR_PROTOCOL_MASK)
+128	  if ((imutexattr->mutexkind & (PTHREAD_MUTEXATTR_FLAG_PSHARED
+141	  return 0;
+130	    mutex->__data.__kind |= PTHREAD_MUTEX_PSHARED_BIT;
+libusb_init (context=0x76ec77f4 <gLJContext>) at core.c:2172
+2172		usbi_mutex_static_lock(&active_contexts_lock);
+2169		list_init(&ctx->open_devs);
+2170		list_init(&ctx->hotplug_cbs);
+2168		list_init(&ctx->usb_devs);
+2172		usbi_mutex_static_lock(&active_contexts_lock);
+2169		list_init(&ctx->open_devs);
+list_init (entry=0x76400498) at libusbi.h:127
+127		entry->prev = entry->next = entry;
+libusb_init (context=0x76ec77f4 <gLJContext>) at core.c:2172
+2172		usbi_mutex_static_lock(&active_contexts_lock);
+2168		list_init(&ctx->usb_devs);
+list_init (entry=0x76400478) at libusbi.h:127
+127		entry->prev = entry->next = entry;
+libusb_init (context=0x76ec77f4 <gLJContext>) at core.c:2172
+2172		usbi_mutex_static_lock(&active_contexts_lock);
+__GI___pthread_mutex_lock (mutex=0x76eb2510 <active_contexts_lock>)
+    at pthread_mutex_lock.c:66
+66	  unsigned int type = PTHREAD_MUTEX_TYPE_ELISION (mutex);
+70	  if (__builtin_expect (type & ~(PTHREAD_MUTEX_KIND_MASK_NP
+66	  unsigned int type = PTHREAD_MUTEX_TYPE_ELISION (mutex);
+63	{
+70	  if (__builtin_expect (type & ~(PTHREAD_MUTEX_KIND_MASK_NP
+74	  if (__builtin_expect (type == PTHREAD_MUTEX_TIMED_NP, 1))
+79	      LLL_MUTEX_LOCK (mutex);
+80	      assert (mutex->__data.__owner == 0);
+158	  pid_t id = THREAD_GETMEM (THREAD_SELF, tid);
+__aeabi_read_tp ()
+    at ../ports/sysdeps/unix/sysv/linux/arm/aeabi_read_tp.S:52
+52		mov	r0, #0xffff0fff
+53		sub	pc, r0, #31
+__GI___pthread_mutex_lock (mutex=0x76eb2510 <active_contexts_lock>)
+    at pthread_mutex_lock.c:163
+163	  ++mutex->__data.__nusers;
+158	  pid_t id = THREAD_GETMEM (THREAD_SELF, tid);
+168	  return 0;
+163	  ++mutex->__data.__nusers;
+161	  mutex->__data.__owner = id;
+163	  ++mutex->__data.__nusers;
+169	}
+libusb_init (context=0x76ec77f4 <gLJContext>) at core.c:2173
+2173		if (first_init) {
+2175			list_init (&active_contexts_list);
+list_init (entry=<optimized out>) at libusbi.h:127
+127		entry->prev = entry->next = entry;
+libusb_init (context=0x76ec77f4 <gLJContext>) at core.c:2174
+2174			first_init = 0;
+2175			list_init (&active_contexts_list);
+list_init (entry=0x76eb2574 <active_contexts_list>) at libusbi.h:127
+127		entry->prev = entry->next = entry;
+libusb_init (context=0x76ec77f4 <gLJContext>) at core.c:2177
+2177		list_add (&ctx->list, &active_contexts_list);
+list_add (head=<optimized out>, entry=<optimized out>)
+    at libusbi.h:133
+133		entry->prev = head;
+libusb_init (context=0x76ec77f4 <gLJContext>) at core.c:2178
+2178		usbi_mutex_static_unlock(&active_contexts_lock);
+2177		list_add (&ctx->list, &active_contexts_list);
+list_add (head=<optimized out>, entry=<optimized out>)
+    at libusbi.h:133
+133		entry->prev = head;
+libusb_init (context=0x76ec77f4 <gLJContext>) at core.c:2177
+2177		list_add (&ctx->list, &active_contexts_list);
+2178		usbi_mutex_static_unlock(&active_contexts_lock);
+2177		list_add (&ctx->list, &active_contexts_list);
+list_add (head=0x76eb2574 <active_contexts_list>, 
+    entry=<optimized out>) at libusbi.h:133
+133		entry->prev = head;
+132		entry->next = head->next;
+libusb_init (context=0x76ec77f4 <gLJContext>) at core.c:2178
+2178		usbi_mutex_static_unlock(&active_contexts_lock);
+2177		list_add (&ctx->list, &active_contexts_list);
+list_add (head=0x76eb2574 <active_contexts_list>, 
+    entry=<optimized out>) at libusbi.h:135
+135		head->next->prev = entry;
+136		head->next = entry;
+libusb_init (context=0x76ec77f4 <gLJContext>) at core.c:2178
+2178		usbi_mutex_static_unlock(&active_contexts_lock);
+__GI___pthread_mutex_unlock (
+    mutex=0x76eb2510 <active_contexts_lock>)
+    at pthread_mutex_unlock.c:310
+310	  return __pthread_mutex_unlock_usercnt (mutex, 1);
+__pthread_mutex_unlock_usercnt (mutex=0x764005b4, decr=1995120908)
+    at pthread_mutex_unlock.c:40
+40	{
+41	  int type = PTHREAD_MUTEX_TYPE_ELISION (mutex);
+42	  if (__builtin_expect (type &
+40	{
+41	  int type = PTHREAD_MUTEX_TYPE_ELISION (mutex);
+42	  if (__builtin_expect (type &
+46	  if (__builtin_expect (type, PTHREAD_MUTEX_TIMED_NP)
+52	      if (decr)
+51	      mutex->__data.__owner = 0;
+54		--mutex->__data.__nusers;
+57	      lll_unlock (mutex->__data.__lock, PTHREAD_MUTEX_PSHARED (mutex));
+61	      return 0;
+93	}
+libusb_init (context=0x76ec77f4 <gLJContext>) at core.c:2180
+2180		if (usbi_backend.init) {
+2181			r = usbi_backend.init(ctx);
+op_init (ctx=ctx@entry=0x76400468) at os/linux_usbfs.c:395
+395		usbfs_path = find_usbfs_path();
+find_usbfs_path () at os/linux_usbfs.c:298
+298		if (check_usb_vfs(path)) {
+op_init (ctx=ctx@entry=0x76400468) at os/linux_usbfs.c:391
+391	{
+395		usbfs_path = find_usbfs_path();
+find_usbfs_path () at os/linux_usbfs.c:298
+298		if (check_usb_vfs(path)) {
+check_usb_vfs (dirname=dirname@entry=0x76ea14e4 "/dev/bus/usb")
+    at os/linux_usbfs.c:276
+276		dir = opendir(dirname);
+__opendir (name=name@entry=0x76ea14e4 "/dev/bus/usb")
+    at ../sysdeps/posix/opendir.c:159
+159	{
+160	  return __opendirat (AT_FDCWD, name);
+__opendirat (dfd=dfd@entry=-100, 
+    name=name@entry=0x76ea14e4 "/dev/bus/usb")
+    at ../sysdeps/posix/opendir.c:87
+87	{
+91	  if (__builtin_expect (name[0], '\1') == '\0')
+129	  fd = openat_not_cancel_3 (dfd, name, flags);
+__openat_nocancel (fd=-100, file=0x76ea14e4 "/dev/bus/usb", 
+    oflag=673792, mode=0) at ../sysdeps/unix/sysv/linux/openat.c:93
+93	      res = INLINE_SYSCALL (openat, 4, fd, file, oflag, mode);
+143	}
+__opendirat (dfd=22, dfd@entry=-100, 
+    name=name@entry=0x76ea14e4 "/dev/bus/usb")
+    at ../sysdeps/posix/opendir.c:131
+131	  if (__builtin_expect (fd, 0) < 0)
+152	  return __alloc_dir (fd, true, 0, statp);
+153	}
+__opendirat (dfd=22, 
+    name=0x1 <error: Cannot access memory at address 0x1>)
+    at ../sysdeps/posix/opendir.c:152
+152	  return __alloc_dir (fd, true, 0, statp);
+__alloc_dir (fd=22, close_fd=true, flags=0, statp=0x0)
+    at ../sysdeps/posix/opendir.c:181
+181	{
+186	  if ((! close_fd && (flags & O_CLOEXEC) == 0)
+181	{
+186	  if ((! close_fd && (flags & O_CLOEXEC) == 0)
+187	      || ! check_have_o_cloexec (fd))
+check_have_o_cloexec (fd=22) at ../sysdeps/posix/opendir.c:171
+171	  if (__have_o_cloexec == 0)
+__alloc_dir (fd=22, close_fd=true, flags=<optimized out>, statp=0x0)
+    at ../sysdeps/posix/opendir.c:187
+187	      || ! check_have_o_cloexec (fd))
+check_have_o_cloexec (fd=22) at ../sysdeps/posix/opendir.c:172
+172	    __have_o_cloexec = (__fcntl (fd, F_GETFD, 0) & FD_CLOEXEC) == 0 ? -1 : 1;
+__GI___libc_fcntl (fd=fd@entry=22, cmd=1)
+    at ../sysdeps/unix/sysv/linux/i386/fcntl.c:52
+52	  if (SINGLE_THREAD_P || (cmd != F_SETLKW && cmd != F_SETLKW64))
+44	{
+52	  if (SINGLE_THREAD_P || (cmd != F_SETLKW && cmd != F_SETLKW64))
+44	{
+52	  if (SINGLE_THREAD_P || (cmd != F_SETLKW && cmd != F_SETLKW64))
+48	  va_start (ap, cmd);
+52	  if (SINGLE_THREAD_P || (cmd != F_SETLKW && cmd != F_SETLKW64))
+44	{
+48	  va_start (ap, cmd);
+44	{
+49	  arg = va_arg (ap, void *);
+52	  if (SINGLE_THREAD_P || (cmd != F_SETLKW && cmd != F_SETLKW64))
+53	    return INLINE_SYSCALL (fcntl64, 3, fd, cmd, arg);
+62	}
+__alloc_dir (fd=22, close_fd=<optimized out>, 
+    flags=<optimized out>, statp=0x0)
+    at ../sysdeps/posix/opendir.c:187
+187	      || ! check_have_o_cloexec (fd))
+check_have_o_cloexec (fd=22) at ../sysdeps/posix/opendir.c:172
+172	    __have_o_cloexec = (__fcntl (fd, F_GETFD, 0) & FD_CLOEXEC) == 0 ? -1 : 1;
+__alloc_dir (fd=22, close_fd=<optimized out>, 
+    flags=<optimized out>, statp=0x0)
+    at ../sysdeps/posix/opendir.c:187
+187	      || ! check_have_o_cloexec (fd))
+202	  if (statp != NULL)
+198	  size_t allocation = default_allocation;
+202	  if (statp != NULL)
+207	  DIR *dirp = (DIR *) malloc (sizeof (DIR) + allocation);
+__GI___libc_malloc (bytes=32800) at malloc.c:2881
+2881	    = atomic_forced_read (__malloc_hook);
+2876	{
+2881	    = atomic_forced_read (__malloc_hook);
+2876	{
+2881	    = atomic_forced_read (__malloc_hook);
+2882	  if (__builtin_expect (hook != NULL, 0))
+2885	  arena_lookup (ar_ptr);
+__aeabi_read_tp ()
+    at ../ports/sysdeps/unix/sysv/linux/arm/aeabi_read_tp.S:52
+52		mov	r0, #0xffff0fff
+53		sub	pc, r0, #31
+__GI___libc_malloc (bytes=32800) at malloc.c:2887
+2887	  arena_lock (ar_ptr, bytes);
+2891	  victim = _int_malloc (ar_ptr, bytes);
+_int_malloc (av=av@entry=0x76400010, bytes=bytes@entry=32800)
+    at malloc.c:3302
+3302	{
+3332	  checked_request2size (bytes, nb);
+3302	{
+3332	  checked_request2size (bytes, nb);
+3340	  if ((unsigned long) (nb) <= (unsigned long) (get_max_fast ()))
+3332	  checked_request2size (bytes, nb);
+3340	  if ((unsigned long) (nb) <= (unsigned long) (get_max_fast ()))
+3332	  checked_request2size (bytes, nb);
+3340	  if ((unsigned long) (nb) <= (unsigned long) (get_max_fast ()))
+3332	  checked_request2size (bytes, nb);
+3340	  if ((unsigned long) (nb) <= (unsigned long) (get_max_fast ()))
+3377	  if (in_smallbin_range (nb))
+3421	      idx = largebin_index (nb);
+3422	      if (have_fastchunks (av))
+3792	            idx = largebin_index (nb);
+3447	            malloc_printerr (check_action, "malloc(): memory corruption",
+3459	          if (in_smallbin_range (nb) &&
+3792	            idx = largebin_index (nb);
+3447	            malloc_printerr (check_action, "malloc(): memory corruption",
+3462	              (unsigned long) (size) > (unsigned long) (nb + MINSIZE))
+3792	            idx = largebin_index (nb);
+3447	            malloc_printerr (check_action, "malloc(): memory corruption",
+3462	              (unsigned long) (size) > (unsigned long) (nb + MINSIZE))
+3442	      while ((victim = unsorted_chunks (av)->bk) != unsorted_chunks (av))
+3576	      if (!in_smallbin_range (nb))
+3578	          bin = bin_at (av, idx);
+3581	          if ((victim = first (bin)) != bin &&
+3649	      ++idx;
+3653	      bit = idx2bit (idx);
+3649	      ++idx;
+3653	      bit = idx2bit (idx);
+3651	      block = idx2block (idx);
+3652	      map = av->binmap[block];
+3650	      bin = bin_at (av, idx);
+3653	      bit = idx2bit (idx);
+3652	      map = av->binmap[block];
+3650	      bin = bin_at (av, idx);
+3658	          if (bit > map || bit == 0)
+3662	                  if (++block >= BINMAPSIZE) /* out of bins */
+3765	      victim = av->top;
+3768	      if ((unsigned long) (size) >= (unsigned long) (nb + MINSIZE))
+3766	      size = chunksize (victim);
+3768	      if ((unsigned long) (size) >= (unsigned long) (nb + MINSIZE))
+3779	          alloc_perturb (p, bytes);
+alloc_perturb (n=<optimized out>, p=<optimized out>)
+    at malloc.c:1862
+1862	  if (__glibc_unlikely (perturb_byte))
+_int_malloc (av=av@entry=0x76400010, bytes=bytes@entry=32800)
+    at malloc.c:3773
+3773	          set_head (victim, nb | PREV_INUSE |
+3779	          alloc_perturb (p, bytes);
+alloc_perturb (n=<optimized out>, p=<optimized out>)
+    at malloc.c:1862
+1862	  if (__glibc_unlikely (perturb_byte))
+_int_malloc (av=av@entry=0x76400010, bytes=bytes@entry=32800)
+    at malloc.c:3773
+3773	          set_head (victim, nb | PREV_INUSE |
+3779	          alloc_perturb (p, bytes);
+alloc_perturb (n=<optimized out>, p=<optimized out>)
+    at malloc.c:1862
+1862	  if (__glibc_unlikely (perturb_byte))
+_int_malloc (av=av@entry=0x76400010, bytes=bytes@entry=32800)
+    at malloc.c:3770
+3770	          remainder_size = size - nb;
+3773	          set_head (victim, nb | PREV_INUSE |
+3771	          remainder = chunk_at_offset (victim, nb);
+3775	          set_head (remainder, remainder_size | PREV_INUSE);
+3773	          set_head (victim, nb | PREV_INUSE |
+3779	          alloc_perturb (p, bytes);
+alloc_perturb (n=<optimized out>, p=<optimized out>)
+    at malloc.c:1862
+1862	  if (__glibc_unlikely (perturb_byte))
+_int_malloc (av=av@entry=0x76400010, bytes=bytes@entry=32800)
+    at malloc.c:3772
+3772	          av->top = remainder;
+3778	          void *p = chunk2mem (victim);
+3773	          set_head (victim, nb | PREV_INUSE |
+3775	          set_head (remainder, remainder_size | PREV_INUSE);
+3779	          alloc_perturb (p, bytes);
+alloc_perturb (n=32800, p=0x764005c8 "") at malloc.c:1862
+1862	  if (__glibc_unlikely (perturb_byte))
+_int_malloc (av=av@entry=0x76400010, bytes=bytes@entry=32800)
+    at malloc.c:3806
+3806	}
+__GI___libc_malloc (bytes=32800) at malloc.c:2892
+2892	  if (!victim)
+2903	    (void) mutex_unlock (&ar_ptr->mutex);
+2904	  assert (!victim || chunk_is_mmapped (mem2chunk (victim)) ||
+2907	}
+__alloc_dir (fd=22, close_fd=<optimized out>, 
+    flags=<optimized out>, statp=<optimized out>)
+    at ../sysdeps/posix/opendir.c:208
+208	  if (dirp == NULL)
+228	  __libc_lock_init (dirp->lock);
+236	  return dirp;
+226	  dirp->fd = fd;
+228	  __libc_lock_init (dirp->lock);
+231	  dirp->size = 0;
+232	  dirp->offset = 0;
+233	  dirp->filepos = 0;
+234	  dirp->errcode = 0;
+237	}
+check_usb_vfs (dirname=dirname@entry=0x76ea14e4 "/dev/bus/usb")
+    at os/linux_usbfs.c:277
+277		if (!dir)
+280		while ((entry = readdir(dir)) != NULL) {
+
+Program received signal SIG63, Real-time event 63.
+[Switching to Thread 0x76d30000 (LWP 2289)]
+0x76d7c298 in do_sigsuspend (set=0x7efff500)
+    at ../sysdeps/unix/sysv/linux/sigsuspend.c:31
+31	  return INLINE_SYSCALL (rt_sigsuspend, 2, set, _NSIG / 8);
+
+Program received signal SIGSEGV, Segmentation fault.
+[Switching to Thread 0x7696d460 (LWP 2308)]
+__libc_calloc (n=1, elem_size=44) at malloc.c:3161
+3161	{
+[Thread 0x7693e460 (LWP 2310) exited]
+[Thread 0x76955460 (LWP 2309) exited]
+[Thread 0x7696d460 (LWP 2308) exited]
+[Thread 0x7698b460 (LWP 2307) exited]
+[Thread 0x769a2460 (LWP 2306) exited]
+[Thread 0x769bc460 (LWP 2305) exited]
+[Thread 0x769df460 (LWP 2304) exited]
+[Thread 0x76b03460 (LWP 2303) exited]
+[Thread 0x76b1c460 (LWP 2301) exited]
+[Thread 0x76b3c460 (LWP 2300) exited]
+[Thread 0x76b5b460 (LWP 2299) exited]
+[Thread 0x76bd0460 (LWP 2298) exited]
+[Thread 0x76bd4460 (LWP 2297) exited]
+[Thread 0x76bd8460 (LWP 2296) exited]
+[Thread 0x76bdc460 (LWP 2295) exited]
+[Thread 0x76be0460 (LWP 2294) exited]
+[Thread 0x76be4460 (LWP 2293) exited]
+[Thread 0x76ff7460 (LWP 2292) exited]
+[Thread 0x76d30000 (LWP 2289) exited]
+
+Program terminated with signal SIGSEGV, Segmentation fault.
+The program no longer exists.
+The program is not being run.
+The program is not being run.
+The program is not being run.
+The program is not being run.
+The program is not being run.
+The program is not being run.
+The program is not being run.
+The program is not being run.
+The program is not being run.
+The program is not being run.
+The program is not being run.
+The program is not being run.
+The program is not being run.
+The program is not being run.

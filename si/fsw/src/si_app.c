@@ -17,17 +17,13 @@
 #include "si_events.h"
 #include "si_version.h"
 
-
 /*
 ** global data
 */
 
-
-
 SI_hk_tlm_t    SI_HkTelemetryPkt;
 CFE_SB_PipeId_t    SI_CommandPipe;
 CFE_SB_MsgPtr_t    SIMsgPtr;
-
 
 int ReadingsArraySize;
 
@@ -43,7 +39,14 @@ SI_Sensor_t PTQueue[8];
 
 uint8 SPITx[3];
 
+SI_Sensor_t PT1, PT2, PT3, PT4, PT5, PT6, PT7, PT8, PT9, PT10, PT11, PT12, PT13, PT14, TC1, TC2, TC3, TC4, TC5, TC6, VBAT, CRNT;
+
 char LogFilename[OS_MAX_PATH_LEN];
+
+//zeromq pointers & such
+void *outputcontext;
+void *outputresponder;
+int rc;
 
 static CFE_EVS_BinFilter_t  SI_EventFilters[] =
        {  /* Event ID    mask */
@@ -108,7 +111,8 @@ void SI_AppMain( void )
         SI_ReadPTs();
         SI_ReadTCs();
     }
-
+    
+    closeUSBConnection(DAQ);
     CFE_ES_ExitApp(RunStatus);
 
 } /* End of SI_AppMain() */
@@ -120,6 +124,9 @@ void SI_AppMain( void )
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * **/
 void SI_AppInit(void)
 {
+    CFE_EVS_SendEvent (SI_STARTUP_INF_EID, CFE_EVS_INFORMATION,
+               "SI_AppInit Started");
+
     /*
     ** Register the app with Executive services
     */
@@ -146,9 +153,14 @@ void SI_AppInit(void)
                    SI_HK_TLM_MID,
                    SI_HK_TLM_LNGTH, TRUE);
 
+    CFE_EVS_SendEvent (SI_STARTUP_INF_EID, CFE_EVS_INFORMATION,
+               "SI_AppInit finished connecting to the software bus");
 
     SI_AssignValues();
 
+
+    CFE_EVS_SendEvent (SI_STARTUP_INF_EID, CFE_EVS_INFORMATION,
+               "SI_AppInit initialized sensorIDs");
     /*if(CFE_SUCCESS == SI_TableInit())
     {
         CFE_EVS_SendEvent(SI_STARTUP_INF_EID,CFE_EVS_INFORMATION,

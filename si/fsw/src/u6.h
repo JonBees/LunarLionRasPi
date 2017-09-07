@@ -16,10 +16,11 @@
 extern "C"{
 #endif
 
-//these conflict with the definitions in the cFE
-/*typedef unsigned char uint8;
-typedef unsigned short uint16;
-typedef unsigned int uint32;*/
+typedef unsigned char uint8;
+/*typedef unsigned short uint16;
+typedef unsigned int lj_uint32;*/
+typedef unsigned short lj_uint16;
+typedef unsigned int lj_uint32;
 
 //Structure for storing calibration constants
 struct U6_CALIBRATION_INFORMATION {
@@ -112,7 +113,7 @@ uint8 normalChecksum8( uint8 *b,
 //b = data packet for normal command
 //n = size of data packet
 
-uint16 extendedChecksum16( uint8 *b,
+lj_uint16 extendedChecksum16( uint8 *b,
                            int n);
 //Returns the Checksum16 for a extended command data packet.
 //b = data packet for extended command
@@ -130,7 +131,7 @@ HANDLE openUSBConnection( int localID);
 void closeUSBConnection( HANDLE hDevice);
 //Closes a HANDLE to a U6 device.
 
-long getTickCount(void);
+long getTickCount();
 //Returns the number of milliseconds that has elasped since the system was
 //started.
 
@@ -170,7 +171,7 @@ long getAinVoltCalibrated( u6CalibrationInfo *caliInfo,
                            int resolutionIndex,
                            int gainIndex,
                            int bits24,
-                           uint32 bytesVolt,
+                           lj_uint32 bytesVolt,
                            double *analogVolt);
 //Translates the binary AIN reading from the U6 to a voltage value (calibrated)
 //in Volts.  Call getCalibrationInfo first to set up caliInfo.  Returns -1 on
@@ -201,7 +202,7 @@ long getDacBinVoltCalibrated8Bit( u6CalibrationInfo *caliInfo,
 long getDacBinVoltCalibrated16Bit( u6CalibrationInfo *caliInfo,
                                    int dacNumber,
                                    double analogVolt,
-                                   uint16 *bytesVolt16);
+                                   lj_uint16 *bytesVolt16);
 //Translates a analog output voltage value (Volts) to a binary 16 bit value
 //(calibrated) that can be sent to a U6. Call getCalibrationInfo first to set
 //up caliInfo.  Returns -1 on error, 0 on success.
@@ -214,7 +215,7 @@ long getTempKCalibrated( u6CalibrationInfo *caliInfo,
                          int resolutionIndex,
                          int gainIndex,
                          int bits24,
-                         uint32 bytesTemp,
+                         lj_uint32 bytesTemp,
                          double *kelvinTemp);
 //Translates the binary reading from the U6 to a temperature value
 //(calibrated) in Kelvin.  Call getCalibrationInfo first to set up caliInfo.
@@ -233,7 +234,7 @@ long getTempKCalibrated( u6CalibrationInfo *caliInfo,
 long getTdacBinVoltCalibrated( u6TdacCalibrationInfo *caliInfo,
                                int dacNumber,
                                double analogVolt,
-                               uint16 *bytesVolt);
+                               lj_uint16 *bytesVolt);
 //Translates a voltage value (Volts) to binary analog input bytes (calibrated)
 //that can be sent to a LJTick-DAC (LJTDAC).  Call getLJTDACCalibrationInfo
 //first to set up caliInfo.  Returns -1 on error, 0 on success.
@@ -245,7 +246,7 @@ long getTdacBinVoltCalibrated( u6TdacCalibrationInfo *caliInfo,
 long getAinVoltUncalibrated( int resolutionIndex,
                              int gainIndex,
                              int bits24,
-                             uint32 bytesVolt,
+                             lj_uint32 bytesVolt,
                              double *analogVolt);
 //Translates the binary AIN reading from the U6 to a voltage value
 //(uncalibrated) in Volts.  Returns -1 on error, 0 on success.
@@ -270,7 +271,7 @@ long getDacBinVoltUncalibrated8Bit( int dacNumber,
 
 long getDacBinVoltUncalibrated16Bit( int dacNumber,
                                      double analogVolt,
-                                     uint16 *bytesVolt16);
+                                     lj_uint16 *bytesVolt16);
 //Translates a DAC voltage value (Volts) to a binary 16 bit value
 //(uncalibrated) that can be sent to a U6.  Returns -1 on error, 0 on
 //success.
@@ -281,7 +282,7 @@ long getDacBinVoltUncalibrated16Bit( int dacNumber,
 long getTempKUncalibrated( int resolutionIndex,
                            int gainIndex,
                            int bits24,
-                           uint32 bytesTemp,
+                           lj_uint32 bytesTemp,
                            double *kelvinTemp);
 //Translates the binary reading from the U6, to a temperature value
 //(uncalibrated) in Kelvin.

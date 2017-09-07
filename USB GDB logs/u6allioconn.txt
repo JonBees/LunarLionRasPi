@@ -1,0 +1,277 @@
+Starting program: /home/pi/exodriver-master/examples/U6/u6allio 
+[Thread debugging using libthread_db enabled]
+Using host libthread_db library "/lib/arm-linux-gnueabihf/libthread_db.so.1".
+
+Breakpoint 1, main (argc=1, argv=0x7efff7a4) at u6allio.c:27
+27	    if( (hDevice = openUSBConnection(-1)) == NULL )
+openUSBConnection (localID=-1) at u6.c:122
+122	    uint16 checksumTotal = 0;
+123	    uint32 dev, numDevices = 0;
+125	    HANDLE hDevice = 0;
+127	    numDevices = LJUSB_GetDevCount(U6_PRODUCT_ID);
+LJUSB_GetDevCount (ProductID=6) at labjackusb.c:1061
+1061	    libusb_device **devs = NULL;
+1062	    ssize_t cnt = 0;
+1063	    int r = 1;
+1064	    unsigned int i = 0;
+1065	    unsigned int ljFoundCount = 0;
+1067	    if (!gIsLibUSBInitialized) {
+1068	        r = libusb_init(&gLJContext);
+libusb_init (context=0x76f3e7f4 <gLJContext>) at core.c:2125
+2125		size_t priv_size = usbi_backend.context_priv_size;
+2123	{
+2125		size_t priv_size = usbi_backend.context_priv_size;
+2130		usbi_mutex_static_lock(&default_context_lock);
+2123	{
+2125		size_t priv_size = usbi_backend.context_priv_size;
+2130		usbi_mutex_static_lock(&default_context_lock);
+2125		size_t priv_size = usbi_backend.context_priv_size;
+2130		usbi_mutex_static_lock(&default_context_lock);
+pthread_mutex_lock (mutex=mutex@entry=0x76de84f4 <default_context_lock>) at forward.c:192
+192	FORWARD (pthread_mutex_lock, (pthread_mutex_t *mutex), (mutex), 0)
+__GI___pthread_mutex_lock (mutex=0x76de84f4 <default_context_lock>) at pthread_mutex_lock.c:66
+66	  unsigned int type = PTHREAD_MUTEX_TYPE_ELISION (mutex);
+70	  if (__builtin_expect (type & ~(PTHREAD_MUTEX_KIND_MASK_NP
+66	  unsigned int type = PTHREAD_MUTEX_TYPE_ELISION (mutex);
+63	{
+70	  if (__builtin_expect (type & ~(PTHREAD_MUTEX_KIND_MASK_NP
+74	  if (__builtin_expect (type == PTHREAD_MUTEX_TIMED_NP, 1))
+79	      LLL_MUTEX_LOCK (mutex);
+80	      assert (mutex->__data.__owner == 0);
+158	  pid_t id = THREAD_GETMEM (THREAD_SELF, tid);
+__aeabi_read_tp () at ../ports/sysdeps/unix/sysv/linux/arm/aeabi_read_tp.S:52
+52		mov	r0, #0xffff0fff
+53		sub	pc, r0, #31
+__GI___pthread_mutex_lock (mutex=0x76de84f4 <default_context_lock>) at pthread_mutex_lock.c:163
+163	  ++mutex->__data.__nusers;
+158	  pid_t id = THREAD_GETMEM (THREAD_SELF, tid);
+168	  return 0;
+163	  ++mutex->__data.__nusers;
+161	  mutex->__data.__owner = id;
+163	  ++mutex->__data.__nusers;
+169	}
+libusb_init (context=0x76f3e7f4 <gLJContext>) at core.c:2132
+2132		if (!timestamp_origin.tv_sec) {
+2133			usbi_backend.clock_gettime(USBI_CLOCK_REALTIME, &timestamp_origin);
+op_clock_gettime (clk_id=clk_id@entry=1, tp=tp@entry=0x76de84ec <timestamp_origin>) at os/linux_usbfs.c:2701
+2701		switch (clk_id) {
+2705			return clock_gettime(CLOCK_REALTIME, tp);
+__GI___clock_gettime (clock_id=0, tp=0x76de84ec <timestamp_origin>) at ../sysdeps/unix/clock_gettime.c:96
+96	  switch (clock_id)
+93	{
+115	      SYSDEP_GETTIME_CPU (clock_id, tp);
+96	  switch (clock_id)
+99	      SYSDEP_GETTIME;
+115	      SYSDEP_GETTIME_CPU (clock_id, tp);
+134	}
+libusb_init (context=0x76f3e7f4 <gLJContext>) at core.c:2136
+2136		if (!context && usbi_default_context) {
+2143		ctx = calloc(1, sizeof(*ctx) + priv_size);
+__libc_calloc (n=1, elem_size=344) at malloc.c:3174
+3174	  if (__builtin_expect ((n | elem_size) >= HALF_INTERNAL_SIZE_T, 0))
+3161	{
+3174	  if (__builtin_expect ((n | elem_size) >= HALF_INTERNAL_SIZE_T, 0))
+3161	{
+3171	  bytes = n * elem_size;
+3161	{
+3174	  if (__builtin_expect ((n | elem_size) >= HALF_INTERNAL_SIZE_T, 0))
+3184	    atomic_forced_read (__malloc_hook);
+3185	  if (__builtin_expect (hook != NULL, 0))
+3188	      mem = (*hook)(sz, RETURN_ADDRESS (0));
+malloc_hook_ini (sz=344, caller=0x76dc9c60 <libusb_init+88>) at hooks.c:31
+31	  ptmalloc_init ();
+ptmalloc_init () at arena.c:373
+373	  if (__malloc_initialized >= 0)
+malloc_hook_ini (sz=344, caller=0x76dc9c60 <libusb_init+88>) at hooks.c:30
+30	  __malloc_hook = NULL;
+29	{
+31	  ptmalloc_init ();
+ptmalloc_init () at arena.c:373
+373	  if (__malloc_initialized >= 0)
+malloc_hook_ini (sz=344, caller=0x76dc9c60 <libusb_init+88>) at hooks.c:29
+29	{
+30	  __malloc_hook = NULL;
+31	  ptmalloc_init ();
+ptmalloc_init () at arena.c:373
+373	  if (__malloc_initialized >= 0)
+malloc_hook_ini (sz=344, caller=<optimized out>) at hooks.c:29
+29	{
+31	  ptmalloc_init ();
+ptmalloc_init () at arena.c:373
+373	  if (__malloc_initialized >= 0)
+malloc_hook_ini (sz=344, caller=<optimized out>) at hooks.c:30
+30	  __malloc_hook = NULL;
+31	  ptmalloc_init ();
+ptmalloc_init () at arena.c:373
+373	  if (__malloc_initialized >= 0)
+ptmalloc_init () at arena.c:384
+384	  if (_dl_open_hook != NULL
+376	  __malloc_initialized = 0;
+384	  if (_dl_open_hook != NULL
+371	ptmalloc_init (void)
+376	  __malloc_initialized = 0;
+384	  if (_dl_open_hook != NULL
+376	  __malloc_initialized = 0;
+371	ptmalloc_init (void)
+384	  if (_dl_open_hook != NULL
+371	ptmalloc_init (void)
+376	  __malloc_initialized = 0;
+371	ptmalloc_init (void)
+384	  if (_dl_open_hook != NULL
+385	      || (_dl_addr (ptmalloc_init, &di, &l, NULL) != 0
+__GI__dl_addr (address=0x76e5e530 <ptmalloc_init>, info=0x7efff390, info@entry=0x7efff388, mapp=0x7efff38c, mapp@entry=0x7efff384, 
+    symbolp=0x0) at dl-addr.c:126
+126	{
+131	  __rtld_lock_lock_recursive (GL(dl_load_lock));
+126	{
+131	  __rtld_lock_lock_recursive (GL(dl_load_lock));
+126	{
+131	  __rtld_lock_lock_recursive (GL(dl_load_lock));
+126	{
+131	  __rtld_lock_lock_recursive (GL(dl_load_lock));
+126	{
+131	  __rtld_lock_lock_recursive (GL(dl_load_lock));
+__GI___pthread_mutex_lock (mutex=0x76fff51c <_rtld_global+1220>) at pthread_mutex_lock.c:66
+66	  unsigned int type = PTHREAD_MUTEX_TYPE_ELISION (mutex);
+70	  if (__builtin_expect (type & ~(PTHREAD_MUTEX_KIND_MASK_NP
+66	  unsigned int type = PTHREAD_MUTEX_TYPE_ELISION (mutex);
+63	{
+70	  if (__builtin_expect (type & ~(PTHREAD_MUTEX_KIND_MASK_NP
+74	  if (__builtin_expect (type == PTHREAD_MUTEX_TIMED_NP, 1))
+94	  else if (__builtin_expect (PTHREAD_MUTEX_TYPE (mutex)
+98	      pid_t id = THREAD_GETMEM (THREAD_SELF, tid);
+__aeabi_read_tp () at ../ports/sysdeps/unix/sysv/linux/arm/aeabi_read_tp.S:52
+52		mov	r0, #0xffff0fff
+53		sub	pc, r0, #31
+__GI___pthread_mutex_lock (mutex=0x76fff51c <_rtld_global+1220>) at pthread_mutex_lock.c:101
+101	      if (mutex->__data.__owner == id)
+114	      LLL_MUTEX_LOCK (mutex);
+101	      if (mutex->__data.__owner == id)
+114	      LLL_MUTEX_LOCK (mutex);
+116	      assert (mutex->__data.__owner == 0);
+117	      mutex->__data.__count = 1;
+116	      assert (mutex->__data.__owner == 0);
+158	  pid_t id = THREAD_GETMEM (THREAD_SELF, tid);
+__aeabi_read_tp () at ../ports/sysdeps/unix/sysv/linux/arm/aeabi_read_tp.S:52
+52		mov	r0, #0xffff0fff
+53		sub	pc, r0, #31
+__GI___pthread_mutex_lock (mutex=0x76fff51c <_rtld_global+1220>) at pthread_mutex_lock.c:163
+163	  ++mutex->__data.__nusers;
+158	  pid_t id = THREAD_GETMEM (THREAD_SELF, tid);
+168	  return 0;
+163	  ++mutex->__data.__nusers;
+161	  mutex->__data.__owner = id;
+163	  ++mutex->__data.__nusers;
+169	}
+__GI__dl_addr (address=0x76e5e530 <ptmalloc_init>, info=0x7efff390, info@entry=0x7efff388, mapp=0x76ef19ec <__GI__dl_addr+60>, 
+    mapp@entry=0x7efff384, symbolp=0x76fff058 <_rtld_global>) at dl-addr.c:133
+133	  struct link_map *l = _dl_find_dso_for_object (addr);
+135	  if (l)
+137	      determine_info (addr, l, info, mapp, symbolp);
+determine_info (symbolp=0x76fff058 <_rtld_global>, mapp=0x76ef19f4 <__GI__dl_addr+68>, info=0x7efff390, match=0x76ff1588, addr=1994777904)
+    at dl-addr.c:30
+30	  info->dli_fname = match->l_name;
+31	  info->dli_fbase = (void *) match->l_map_start;
+30	  info->dli_fname = match->l_name;
+31	  info->dli_fbase = (void *) match->l_map_start;
+34	  if (__builtin_expect (match->l_name[0], 'a') == '\0'
+39	    = (const ElfW(Sym) *) D_PTR (match, l_info[DT_SYMTAB]);
+40	  const char *strtab = (const char *) D_PTR (match, l_info[DT_STRTAB]);
+45	  if (match->l_info[DT_ADDRTAGIDX (DT_GNU_HASH) + DT_NUM + DT_THISPROCNUM
+42	  ElfW(Word) strtabsize = match->l_info[DT_STRSZ]->d_un.d_val;
+39	    = (const ElfW(Sym) *) D_PTR (match, l_info[DT_SYMTAB]);
+40	  const char *strtab = (const char *) D_PTR (match, l_info[DT_STRTAB]);
+45	  if (match->l_info[DT_ADDRTAGIDX (DT_GNU_HASH) + DT_NUM + DT_THISPROCNUM
+40	  const char *strtab = (const char *) D_PTR (match, l_info[DT_STRTAB]);
+38	  const ElfW(Sym) *symtab
+42	  ElfW(Word) strtabsize = match->l_info[DT_STRSZ]->d_un.d_val;
+45	  if (match->l_info[DT_ADDRTAGIDX (DT_GNU_HASH) + DT_NUM + DT_THISPROCNUM
+50	      for (Elf_Symndx bucket = 0; bucket < match->l_nbuckets; ++bucket)
+52		  Elf32_Word symndx = match->l_gnu_buckets[bucket];
+53		  if (symndx != 0)
+50	      for (Elf_Symndx bucket = 0; bucket < match->l_nbuckets; ++bucket)
+52		  Elf32_Word symndx = match->l_gnu_buckets[bucket];
+53		  if (symndx != 0)
+55		      const Elf32_Word *hasharr = &match->l_gnu_chain_zero[symndx];
+61			  if ((symtab[symndx].st_shndx != SHN_UNDEF
+55		      const Elf32_Word *hasharr = &match->l_gnu_chain_zero[symndx];
+61			  if ((symtab[symndx].st_shndx != SHN_UNDEF
+63			      && ELFW(ST_TYPE) (symtab[symndx].st_info) != STT_TLS
+64			      && DL_ADDR_SYM_MATCH (match, &symtab[symndx],
+71		      while ((*hasharr++ & 1u) == 0);
+61			  if ((symtab[symndx].st_shndx != SHN_UNDEF
+63			      && ELFW(ST_TYPE) (symtab[symndx].st_info) != STT_TLS
+64			      && DL_ADDR_SYM_MATCH (match, &symtab[symndx],
+71		      while ((*hasharr++ & 1u) == 0);
+61			  if ((symtab[symndx].st_shndx != SHN_UNDEF
+63			      && ELFW(ST_TYPE) (symtab[symndx].st_info) != STT_TLS
+64			      && DL_ADDR_SYM_MATCH (match, &symtab[symndx],
+71		      while ((*hasharr++ & 1u) == 0);
+50	      for (Elf_Symndx bucket = 0; bucket < match->l_nbuckets; ++bucket)
+52		  Elf32_Word symndx = match->l_gnu_buckets[bucket];
+53		  if (symndx != 0)
+55		      const Elf32_Word *hasharr = &match->l_gnu_chain_zero[symndx];
+61			  if ((symtab[symndx].st_shndx != SHN_UNDEF
+55		      const Elf32_Word *hasharr = &match->l_gnu_chain_zero[symndx];
+61			  if ((symtab[symndx].st_shndx != SHN_UNDEF
+63			      && ELFW(ST_TYPE) (symtab[symndx].st_info) != STT_TLS
+64			      && DL_ADDR_SYM_MATCH (match, &symtab[symndx],
+71		      while ((*hasharr++ & 1u) == 0);
+61			  if ((symtab[symndx].st_shndx != SHN_UNDEF
+63			      && ELFW(ST_TYPE) (symtab[symndx].st_info) != STT_TLS
+64			      && DL_ADDR_SYM_MATCH (match, &symtab[symndx],
+71		      while ((*hasharr++ & 1u) == 0);
+50	      for (Elf_Symndx bucket = 0; bucket < match->l_nbuckets; ++bucket)
+52		  Elf32_Word symndx = match->l_gnu_buckets[bucket];
+53		  if (symndx != 0)
+55		      const Elf32_Word *hasharr = &match->l_gnu_chain_zero[symndx];
+61			  if ((symtab[symndx].st_shndx != SHN_UNDEF
+55		      const Elf32_Word *hasharr = &match->l_gnu_chain_zero[symndx];
+61			  if ((symtab[symndx].st_shndx != SHN_UNDEF
+63			      && ELFW(ST_TYPE) (symtab[symndx].st_info) != STT_TLS
+64			      && DL_ADDR_SYM_MATCH (match, &symtab[symndx],
+71		      while ((*hasharr++ & 1u) == 0);
+61			  if ((symtab[symndx].st_shndx != SHN_UNDEF
+63			      && ELFW(ST_TYPE) (symtab[symndx].st_info) != STT_TLS
+64			      && DL_ADDR_SYM_MATCH (match, &symtab[symndx],
+71		      while ((*hasharr++ & 1u) == 0);
+61			  if ((symtab[symndx].st_shndx != SHN_UNDEF
+63			      && ELFW(ST_TYPE) (symtab[symndx].st_info) != STT_TLS
+64			      && DL_ADDR_SYM_MATCH (match, &symtab[symndx],
+71		      while ((*hasharr++ & 1u) == 0);
+50	      for (Elf_Symndx bucket = 0; bucket < match->l_nbuckets; ++bucket)
+52		  Elf32_Word symndx = match->l_gnu_buckets[bucket];
+53		  if (symndx != 0)
+55		      const Elf32_Word *hasharr = &match->l_gnu_chain_zero[symndx];
+61			  if ((symtab[symndx].st_shndx != SHN_UNDEF
+55		      const Elf32_Word *hasharr = &match->l_gnu_chain_zero[symndx];
+61			  if ((symtab[symndx].st_shndx != SHN_UNDEF
+63			      && ELFW(ST_TYPE) (symtab[symndx].st_info) != STT_TLS
+64			      && DL_ADDR_SYM_MATCH (match, &symtab[symndx],
+71		      while ((*hasharr++ & 1u) == 0);
+61			  if ((symtab[symndx].st_shndx != SHN_UNDEF
+63			      && ELFW(ST_TYPE) (symtab[symndx].st_info) != STT_TLS
+64			      && DL_ADDR_SYM_MATCH (match, &symtab[symndx],
+71		      while ((*hasharr++ & 1u) == 0);
+61			  if ((symtab[symndx].st_shndx != SHN_UNDEF
+63			      && ELFW(ST_TYPE) (symtab[symndx].st_info) != STT_TLS
+64			      && DL_ADDR_SYM_MATCH (match, &symtab[symndx],
+71		      while ((*hasharr++ & 1u) == 0);
+50	      for (Elf_Symndx bucket = 0; bucket < match->l_nbuckets; ++bucket)
+52		  Elf32_Word symndx = match->l_gnu_buckets[bucket];
+53		  if (symndx != 0)
+55		      const Elf32_Word *hasharr = &match->l_gnu_chain_zero[symndx];
+61			  if ((symtab[symndx].st_shndx != SHN_UNDEF
+55		      const Elf32_Word *hasharr = &match->l_gnu_chain_zero[symndx];
+61			  if ((symtab[symndx].st_shndx != SHN_UNDEF
+63			      && ELFW(ST_TYPE) (symtab[symndx].st_info) != STT_TLS
+64			      && DL_ADDR_SYM_MATCH (match, &symtab[symndx],
+71		      while ((*hasharr++ & 1u) == 0);
+50	      for (Elf_Symndx bucket = 0; bucket < match->l_nbuckets; ++bucket)
+52		  Elf32_Word symndx = match->l_gnu_buckets[bucket];
+53		  if (symndx != 0)
+A debugging session is active.
+
+	Inferior 1 [process 3117] will be killed.
+
+Quit anyway? (y or n) 

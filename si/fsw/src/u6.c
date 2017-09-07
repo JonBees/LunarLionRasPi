@@ -59,7 +59,7 @@ void normalChecksum(uint8 *b, int n)
 
 void extendedChecksum(uint8 *b, int n)
 {
-    uint16 a;
+    lj_uint16 a;
 
     a = extendedChecksum16(b,n);
     b[4] = (uint8)(a & 0xff);
@@ -71,13 +71,13 @@ void extendedChecksum(uint8 *b, int n)
 uint8 normalChecksum8(uint8 *b, int n)
 {
     int i;
-    uint16 a, bb;
+    lj_uint16 a, bb;
 
     //Sums bytes 1 to n-1 unsigned to a 2 byte value. Sums quotient and
     //remainder of 256 division.  Again, sums quotient and remainder of
     //256 division.
     for( i = 1, a = 0; i < n; i++ )
-        a += (uint16)b[i];
+        a += (lj_uint16)b[i];
 
     bb = a/256;
     a = (a-256*bb)+bb;
@@ -87,13 +87,13 @@ uint8 normalChecksum8(uint8 *b, int n)
 }
 
 
-uint16 extendedChecksum16(uint8 *b, int n)
+lj_uint16 extendedChecksum16(uint8 *b, int n)
 {
     int i, a = 0;
 
     //Sums bytes 6 to n-1 to a unsigned 2 byte value
     for( i = 6; i < n; i++ )
-        a += (uint16)b[i];
+        a += (lj_uint16)b[i];
 
     return a;
 }
@@ -106,7 +106,7 @@ uint8 extendedChecksum8(uint8 *b)
     //Sums bytes 1 to 5. Sums quotient and remainder of 256 division. Again, sums
     //quotient and remainder of 256 division.
     for( i = 1, a = 0; i < 6; i++ )
-        a += (uint16)b[i];
+        a += (lj_uint16)b[i];
 
     bb = a/256;
     a = (a-256*bb)+bb;
@@ -119,8 +119,8 @@ uint8 extendedChecksum8(uint8 *b)
 HANDLE openUSBConnection(int localID)
 {
     BYTE sendBuffer[26], recBuffer[38];
-    uint16 checksumTotal = 0;
-    uint32 dev, numDevices = 0;
+    lj_uint16 checksumTotal = 0;
+    lj_uint32 dev, numDevices = 0;
     int i;
     HANDLE hDevice = 0;
 
@@ -389,23 +389,23 @@ long getTdacCalibrationInfo(HANDLE hDevice, u6TdacCalibrationInfo *caliInfo, uin
 
 double FPuint8ArrayToFPDouble(uint8 *buffer, int startIndex)
 {
-    uint32 resultDec = 0, resultWh = 0;
+    lj_uint32 resultDec = 0, resultWh = 0;
 
-    resultDec = (uint32)buffer[startIndex] |
-                ((uint32)buffer[startIndex + 1] << 8) |
-                ((uint32)buffer[startIndex + 2] << 16) |
-                ((uint32)buffer[startIndex + 3] << 24);
+    resultDec = (lj_uint32)buffer[startIndex] |
+                ((lj_uint32)buffer[startIndex + 1] << 8) |
+                ((lj_uint32)buffer[startIndex + 2] << 16) |
+                ((lj_uint32)buffer[startIndex + 3] << 24);
 
-    resultWh = (uint32)buffer[startIndex + 4] |
-                ((uint32)buffer[startIndex + 5] << 8) |
-                ((uint32)buffer[startIndex + 6] << 16) |
-                ((uint32)buffer[startIndex + 7] << 24);
+    resultWh = (lj_uint32)buffer[startIndex + 4] |
+                ((lj_uint32)buffer[startIndex + 5] << 8) |
+                ((lj_uint32)buffer[startIndex + 6] << 16) |
+                ((lj_uint32)buffer[startIndex + 7] << 24);
 
     return ( (double)((int)resultWh) + (double)(resultDec)/4294967296.0 );
 }
 
 
-long getAinVoltCalibrated(u6CalibrationInfo *caliInfo, int resolutionIndex, int gainIndex, int bits24, uint32 bytesVolt, double *analogVolt)
+long getAinVoltCalibrated(u6CalibrationInfo *caliInfo, int resolutionIndex, int gainIndex, int bits24, lj_uint32 bytesVolt, double *analogVolt)
 {
     double value = 0;
     int indexAdjust = 0;
@@ -436,7 +436,7 @@ long getAinVoltCalibrated(u6CalibrationInfo *caliInfo, int resolutionIndex, int 
 
 long getDacBinVoltCalibrated8Bit(u6CalibrationInfo *caliInfo, int dacNumber, double analogVolt, uint8 *bytesVolt8)
 {
-    uint16 u16BytesVolt = 0;
+    lj_uint16 u16BytesVolt = 0;
 
     if( getDacBinVoltCalibrated16Bit(caliInfo, dacNumber, analogVolt, &u16BytesVolt) != -1 )
     {
@@ -447,9 +447,9 @@ long getDacBinVoltCalibrated8Bit(u6CalibrationInfo *caliInfo, int dacNumber, dou
 }
 
 
-long getDacBinVoltCalibrated16Bit(u6CalibrationInfo *caliInfo, int dacNumber, double analogVolt, uint16 *bytesVolt16)
+long getDacBinVoltCalibrated16Bit(u6CalibrationInfo *caliInfo, int dacNumber, double analogVolt, lj_uint16 *bytesVolt16)
 {
-    uint32 dBytesVolt;
+    lj_uint32 dBytesVolt;
 
     if( isCalibrationInfoValid(caliInfo) == 0 )
         return -1;
@@ -466,13 +466,13 @@ long getDacBinVoltCalibrated16Bit(u6CalibrationInfo *caliInfo, int dacNumber, do
     if( dBytesVolt > 65535 )
         dBytesVolt = 65535;
 
-    *bytesVolt16 = (uint16)dBytesVolt;
+    *bytesVolt16 = (lj_uint16)dBytesVolt;
 
     return 0;
 }
 
 
-long getTempKCalibrated(u6CalibrationInfo *caliInfo, int resolutionIndex, int gainIndex, int bits24, uint32 bytesTemp, double *kelvinTemp)
+long getTempKCalibrated(u6CalibrationInfo *caliInfo, int resolutionIndex, int gainIndex, int bits24, lj_uint32 bytesTemp, double *kelvinTemp)
 {
     double value;
 
@@ -484,9 +484,9 @@ long getTempKCalibrated(u6CalibrationInfo *caliInfo, int resolutionIndex, int ga
     return 0;
 }
 
-long getTdacBinVoltCalibrated(u6TdacCalibrationInfo *caliInfo, int dacNumber, double analogVolt, uint16 *bytesVolt)
+long getTdacBinVoltCalibrated(u6TdacCalibrationInfo *caliInfo, int dacNumber, double analogVolt, lj_uint16 *bytesVolt)
 {
-    uint32 dBytesVolt;
+    lj_uint32 dBytesVolt;
 
     if( isTdacCalibrationInfoValid(caliInfo) == 0 )
         return -1;
@@ -503,13 +503,13 @@ long getTdacBinVoltCalibrated(u6TdacCalibrationInfo *caliInfo, int dacNumber, do
     if( dBytesVolt > 65535 )
         dBytesVolt = 65535;
 
-    *bytesVolt = (uint16)dBytesVolt;
+    *bytesVolt = (lj_uint16)dBytesVolt;
 
     return 0;
 }
 
 
-long getAinVoltUncalibrated(int resolutionIndex, int gainIndex, int bits24, uint32 bytesVolt, double *analogVolt)
+long getAinVoltUncalibrated(int resolutionIndex, int gainIndex, int bits24, lj_uint32 bytesVolt, double *analogVolt)
 {
     return getAinVoltCalibrated(&U6_CALIBRATION_INFO_DEFAULT, resolutionIndex, gainIndex, bits24, bytesVolt, analogVolt);
 }
@@ -521,13 +521,13 @@ long getDacBinVoltUncalibrated8Bit(int dacNumber, double analogVolt, uint8 *byte
 }
 
 
-long getDacBinVoltUncalibrated16Bit(int dacNumber, double analogVolt, uint16 *bytesVolt16)
+long getDacBinVoltUncalibrated16Bit(int dacNumber, double analogVolt, lj_uint16 *bytesVolt16)
 {
     return getDacBinVoltCalibrated16Bit(&U6_CALIBRATION_INFO_DEFAULT, dacNumber, analogVolt, bytesVolt16);
 }
 
 
-long getTempKUncalibrated(int resolutionIndex, int gainIndex, int bits24, uint32 bytesTemp, double *kelvinTemp)
+long getTempKUncalibrated(int resolutionIndex, int gainIndex, int bits24, lj_uint32 bytesTemp, double *kelvinTemp)
 {
     return getTempKCalibrated(&U6_CALIBRATION_INFO_DEFAULT, resolutionIndex, gainIndex, bits24, bytesTemp, kelvinTemp);
 }
@@ -535,8 +535,8 @@ long getTempKUncalibrated(int resolutionIndex, int gainIndex, int bits24, uint32
 long I2C(HANDLE hDevice, uint8 I2COptions, uint8 SpeedAdjust, uint8 SDAPinNum, uint8 SCLPinNum, uint8 Address, uint8 NumI2CBytesToSend, uint8 NumI2CBytesToReceive, uint8 *I2CBytesCommand, uint8 *Errorcode, uint8 *AckArray, uint8 *I2CBytesResponse)
 {
     uint8 *sendBuff, *recBuff;
-    uint16 checksumTotal = 0;
-    uint32 ackArrayTotal, expectedAckArray;
+    lj_uint16 checksumTotal = 0;
+    lj_uint32 ackArrayTotal, expectedAckArray;
     int sendChars, recChars, sendSize, recSize, i, ret;
 
     *Errorcode = 0;
@@ -657,7 +657,7 @@ long eAIN(HANDLE Handle, u6CalibrationInfo *CalibrationInfo, long ChannelP, long
 {
     uint8 diff, gain, Errorcode, ErrorFrame;
     uint8 sendDataBuff[4], recDataBuff[5];
-    uint32 bytesV;
+    lj_uint32 bytesV;
 
     if( isCalibrationInfoValid(CalibrationInfo) == 0 )
     {
@@ -729,7 +729,7 @@ long eAIN(HANDLE Handle, u6CalibrationInfo *CalibrationInfo, long ChannelP, long
     if( Errorcode )
         return (long)Errorcode;
 
-    bytesV = recDataBuff[0] + ((uint32)recDataBuff[1])*256 + ((uint32)recDataBuff[2])*65536;
+    bytesV = recDataBuff[0] + ((lj_uint32)recDataBuff[1])*256 + ((lj_uint32)recDataBuff[2])*65536;
     gain = recDataBuff[3]/16;
 
     if( Binary != 0 )
@@ -759,7 +759,7 @@ long eDAC(HANDLE Handle, u6CalibrationInfo *CalibrationInfo, long Channel, doubl
 {
     uint8 Errorcode, ErrorFrame;
     uint8 sendDataBuff[3];
-    uint16 bytesV;
+    lj_uint16 bytesV;
     long sendSize;
 
     if( isCalibrationInfoValid(CalibrationInfo) == 0 )
@@ -996,7 +996,7 @@ long eTCValues(HANDLE Handle, long *aReadTimers, long *aUpdateResetTimers, long 
 long ehConfigIO(HANDLE hDevice, uint8 inWriteMask, uint8 inNumberTimersEnabled, uint8 inCounterEnable, uint8 inPinOffset, uint8 *outNumberTimersEnabled, uint8 *outCounterEnable, uint8 *outPinOffset)
 {
     uint8 sendBuff[16], recBuff[16];
-    uint16 checksumTotal;
+    lj_uint16 checksumTotal;
     int sendChars, recChars, i;
 
     sendBuff[1] = (uint8)(0xF8);  //Command byte
@@ -1079,7 +1079,7 @@ long ehConfigIO(HANDLE hDevice, uint8 inWriteMask, uint8 inNumberTimersEnabled, 
 long ehConfigTimerClock(HANDLE hDevice, uint8 inTimerClockConfig, uint8 inTimerClockDivisor, uint8 *outTimerClockConfig, uint8 *outTimerClockDivisor)
 {
     uint8 sendBuff[10], recBuff[10];
-    uint16 checksumTotal;
+    lj_uint16 checksumTotal;
     int sendChars, recChars;
 
     sendBuff[1] = (uint8)(0xF8);  //Command byte
@@ -1157,7 +1157,7 @@ long ehConfigTimerClock(HANDLE hDevice, uint8 inTimerClockConfig, uint8 inTimerC
 long ehFeedback(HANDLE hDevice, uint8 *inIOTypesDataBuff, long inIOTypesDataSize, uint8 *outErrorcode, uint8 *outErrorFrame, uint8 *outDataBuff, long outDataSize)
 {
     uint8 *sendBuff, *recBuff;
-    uint16 checksumTotal;
+    lj_uint16 checksumTotal;
     int sendChars, recChars, i, sendDWSize, recDWSize, commandBytes, ret;
 
     ret = 0;

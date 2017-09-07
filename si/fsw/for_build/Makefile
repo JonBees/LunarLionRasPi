@@ -21,7 +21,7 @@ ENTRY_PT = SI_AppMain
 #
 # Object files required to build subsystem.
 #
-OBJS = si_app.o
+OBJS = si_app.o u6.o
 
 #
 # Source files required to build subsystem; used to generate dependencies.
@@ -33,7 +33,7 @@ SOURCES = $(OBJS:.o=.c)
 ##
 ## Specify extra C Flags needed to build this subsystem
 ##
-LOCAL_COPTS = -llabjackusb -std=c99
+LOCAL_COPTS = -llabjackusb -lzmq -std=c99
 
 
 ##
